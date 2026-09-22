@@ -32,3 +32,15 @@ make gdb
 ## CI
 
 只检查正在做的那一章。换章时改 workflow 里的目录。
+
+## OpenSpec
+
+AI 改代码之前先在仓库里留下规格，再动手。产物在 `openspec/`，和代码一起提交。聊天记录不算留痕。
+
+Cursor 里用这些命令（重启一次编辑器后才会出现在斜杠命令列表里）：
+
+1. `/opsx-propose`：写下这次改动的 proposal、delta spec、design、tasks。这一步只写文档，不改内核。
+2. `/opsx-apply`：按 tasks 改当前章节的代码。
+3. `/opsx-archive`：做完后把这次 change 归档，并把规格合并进 `openspec/specs/`。
+
+`openspec/specs/` 从空目录开始，只记录已经做过的改动，不为整个内核补一份总规格。已提交的旧章节不要再改。

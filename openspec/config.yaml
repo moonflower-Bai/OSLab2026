@@ -1,0 +1,34 @@
+schema: spec-driven
+
+context: |
+  Language: 简体中文
+  All artifacts must be written in 简体中文.
+  Keep OpenSpec structural headings and SHALL/MUST keywords in English.
+  This repo is the 2026 operating-system lab: riscv64 ucore, one skeleton per chapter (lab1/, lab2/, ...).
+  Change only the chapter currently in progress. Do not edit an earlier chapter after it has been submitted.
+  Before changing code, record an OpenSpec change. Commit proposal.md, the delta spec, design.md, and tasks.md with the code.
+  Specs state observable behavior: preconditions, postconditions, and results. Do not turn them into step-by-step implementation recipes.
+  When a lab task asks for a prompt, keep that prompt in the change directory next to the spec.
+  Specs cover only the behavior this change touches. Do not backfill a spec for the whole kernel.
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always include a "Non-goals" section
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
