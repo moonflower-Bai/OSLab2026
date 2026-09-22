@@ -15,3 +15,7 @@ tags
 
 # 原始压缩包，源码在 lab1/
 lab1.zip
+
+# 遗留的按会话 Prompt 只保留在本地；说明文件仍纳入版本控制
+prompts/**/*.md
+!prompts/README.md

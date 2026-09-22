@@ -1,52 +1,46 @@
 # OSLab2026
 
-2026 秋季操作系统实验，内核是 riscv64 ucore。指导书在 [lab2026](http://8.135.34.58/lab2026/_book/)。
+## 指导书
 
-每一章单独一份骨架，放在 `lab1/`、`lab2/` 这样的目录里。下一章不会在上一章的目录上继续改，旧章节提交后就不再动。
+[riscv64-ucore 操作系统实验指导书](http://8.135.34.58/lab2026/_book/)
 
-## 当前进度
+- [lab0 预备起](http://8.135.34.58/lab2026/_book/lab0/intro.html)
+  - 环境、工具链、QEMU
+- [lab0.5 AI 驱动的操作系统实验](http://8.135.34.58/lab2026/_book/lab0.5/intro.html)
+  - 提示词规格与 AI 协作方式
+- [lab1 最小可执行内核](http://8.135.34.58/lab2026/_book/lab1/lab1.html)
+- lab2 至 lab9
+  - [lab2 物理内存和页表](http://8.135.34.58/lab2026/_book/lab2/lab2.html)
+  - [lab3 中断](http://8.135.34.58/lab2026/_book/lab3/lab3.html)
+  - [lab4 进程管理](http://8.135.34.58/lab2026/_book/lab4/lab4.html)
+  - [lab5 用户程序](http://8.135.34.58/lab2026/_book/lab5/lab5.html)
+  - [lab6 进程调度](http://8.135.34.58/lab2026/_book/lab6/lab6.html)
+  - [lab7 同步互斥](http://8.135.34.58/lab2026/_book/lab7/lab7.html)
+  - [lab8 文件系统](http://8.135.34.58/lab2026/_book/lab8/lab8.html)
+  - [lab9 页面置换与内存映射](http://8.135.34.58/lab2026/_book/lab9/lab9.html)
+- [附录](http://8.135.34.58/lab2026/_book/appendix/intro.html)
 
-`lab1/` 是最小可执行内核。框架代码已经给全，练习是阅读启动流程，并用 GDB 从复位跟到 `0x80200000`。
+## 开发进度
 
-本地另存了两份环境说明：`0_environment_setup.md`、`3_startdash.md`。
+`lab-status.json` 是章节状态的唯一事实来源。当前章节为 `lab1`，冻结章节为空。
 
-## 构建 lab1
+- 已放入仓库
+  - `lab1/`：最小内核骨架，当前练习是阅读启动流程；构建与运行要求见 [lab1/AGENTS.md](lab1/AGENTS.md)
+  - `0_environment_setup.md`、`3_startdash.md`：环境说明
+- 尚未放入
+  - `lab2/` 至 `lab9/`
 
-需要 `riscv64-unknown-elf-gcc` 和 `qemu-system-riscv64`。
+## 开发规范
 
-```bash
-cd lab1
-make
-make qemu
-```
-
-终端出现 `(THU.CST) os is loading ...` 后，按 `Ctrl-A` 再按 `X` 退出 QEMU。`make qemu` 不会自己结束。
-
-调试时开两个终端：
-
-```bash
-make debug
-make gdb
-```
-
-## CI
-
-只检查正在做的那一章。换章时改 workflow 里的目录。
-
-## OpenSpec
-
-AI 改代码之前先在仓库里留下规格，再动手。产物在 `openspec/`，和代码一起提交。聊天记录不算留痕。
-
-会话开始时会自动读入，不需要手动输入斜杠命令：
-
-| 工具 | 自动读入的文件 |
-|---|---|
-| Claude Code | `CLAUDE.md`，技能在 `.claude/skills/` |
-| Codex | `AGENTS.md`，技能在 `.agents/skills/` |
-| OpenCode | `AGENTS.md`，技能在 `.opencode/skills/` |
-| Hermes | `AGENTS.md`（没有单独的 `.hermes.md`，避免盖住它），技能在 `.hermes/skills/` 和 `.agents/skills/` |
-| DeepSeek Harness | `AGENTS.md`（内容与 `CLAUDE.md` 相同，只注入一次） |
-| Cursor | `.cursor/rules/openspec.mdc`（始终生效），技能在 `.cursor/skills/` |
-| 其他读取 `AGENTS.md` 或 `.agents/skills/` 的 harness | 同一套 `AGENTS.md` |
-
-`openspec/specs/` 从空目录开始，只记录已经做过的改动。已提交的旧章节不要再改。
+- 章节状态
+  - 一章一个目录：`lab1/`、`lab2/`、……
+  - 只修改 `lab-status.json` 指定的当前章节；冻结章节不可修改
+  - 单章命令和工具链要求写在该章的 `AGENTS.md`
+- OpenSpec
+  - 修改仓库前先创建 change；提案、实现、归档和提交分别授权
+  - 根规则见 [AGENTS.md](AGENTS.md)，OpenSpec 配置见 [openspec/config.yaml](openspec/config.yaml)
+  - 本地与 GitHub Actions 共用 `scripts/check_governance.py` 检查规格、范围、规则和 Prompt 门禁
+- 用户 Prompt
+  - 只保存直接影响 change 且不含敏感值的用户原文
+  - 证据放在对应 change 的 `prompt.md`，不提交按会话生成的归档
+  - 细节见 [prompts/README.md](prompts/README.md)
