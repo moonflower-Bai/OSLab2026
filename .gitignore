@@ -1,0 +1,17 @@
+.DS_Store
+
+# 构建产物
+obj/
+bin/
+
+# 评分与调试残留
+.qemu.out
+.gdb.in
+cscope*
+tags
+
+# 打包提交
+*.tar.gz
+
+# 原始压缩包，源码在 lab1/
+lab1.zip
