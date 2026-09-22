@@ -37,10 +37,16 @@ make gdb
 
 AI 改代码之前先在仓库里留下规格，再动手。产物在 `openspec/`，和代码一起提交。聊天记录不算留痕。
 
-Cursor 里用这些命令（重启一次编辑器后才会出现在斜杠命令列表里）：
+会话开始时会自动读入，不需要手动输入斜杠命令：
 
-1. `/opsx-propose`：写下这次改动的 proposal、delta spec、design、tasks。这一步只写文档，不改内核。
-2. `/opsx-apply`：按 tasks 改当前章节的代码。
-3. `/opsx-archive`：做完后把这次 change 归档，并把规格合并进 `openspec/specs/`。
+| 工具 | 自动读入的文件 |
+|---|---|
+| Claude Code | `CLAUDE.md`，技能在 `.claude/skills/` |
+| Codex | `AGENTS.md`，技能在 `.agents/skills/` |
+| OpenCode | `AGENTS.md`，技能在 `.opencode/skills/` |
+| Hermes | `AGENTS.md`（没有单独的 `.hermes.md`，避免盖住它），技能在 `.hermes/skills/` 和 `.agents/skills/` |
+| DeepSeek Harness | `AGENTS.md`（内容与 `CLAUDE.md` 相同，只注入一次） |
+| Cursor | `.cursor/rules/openspec.mdc`（始终生效），技能在 `.cursor/skills/` |
+| 其他读取 `AGENTS.md` 或 `.agents/skills/` 的 harness | 同一套 `AGENTS.md` |
 
-`openspec/specs/` 从空目录开始，只记录已经做过的改动，不为整个内核补一份总规格。已提交的旧章节不要再改。
+`openspec/specs/` 从空目录开始，只记录已经做过的改动。已提交的旧章节不要再改。
