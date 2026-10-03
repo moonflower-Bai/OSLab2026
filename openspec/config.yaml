@@ -7,9 +7,13 @@ context: |
   This repository is the 2026 riscv64 ucore operating-system lab, with one skeleton per chapter.
   lab-status.json is the source of truth for the current and frozen chapters.
   Experiment implementation may change only the current chapter and must never change a frozen chapter.
-  OpenSpec artifacts, change-level prompt evidence, governance rules, CI, and repository documentation are workflow metadata and may be changed when required by the approved change.
-  Before implementation, create an OpenSpec change and obtain explicit apply authorization.
-  Applying a change does not authorize archiving or committing it; each later stage requires separate explicit authorization.
+  OpenSpec artifacts, change-level prompt evidence, governance rules, CI, and repository documentation are workflow metadata and may be changed within the authorized request.
+  Follow AGENTS.md routing before selecting a workflow: explicit implementation approval or a quick/direct edit request authorizes direct execution of that scope without another apply message or mandatory planning artifacts.
+  Routine fixes restoring existing behavior and document/LaTeX edits use direct maintenance without creating a change.
+  Substantial new requirements without direct implementation authority use OpenSpec planning and wait for implementation approval only when that authority is still missing.
+  Implementation authority persists across tasks and turns; complete in-scope fixes, validation retries, local design adjustments, and artifact/document updates without repeated approval.
+  Confirm only unapproved requirement or scope increments; a user's explicit direct implementation request already authorizes the named increment.
+  Archiving and committing require explicit authority, which may be granted together with implementation in one message; never request an applicable approval again.
   Specs describe observable behavior, preconditions, postconditions, and results rather than implementation recipes.
   Specs cover only behavior touched by the change and do not backfill the whole kernel.
   Prompt evidence belongs only in the current change's prompt.md.
@@ -28,8 +32,10 @@ rules:
 operations:
   apply:
     guidance:
-      - Implement only tasks in the explicitly authorized change.
+      - Implement the authorized requirement scope and keep tasks coherent; continue routine maintenance without repeated approval.
+      - Honor explicit implementation approval and quick/direct edit requests; ask only about unapproved scope increments or decisions that block progress.
       - Report missing external toolchains as unmet environment conditions; do not claim success.
   archive:
     guidance:
       - Archive only after explicit user authorization and successful validation.
+      - Reuse existing archive authority including normal spec sync; ask only about unresolved conflicts or unapproved exceptions.

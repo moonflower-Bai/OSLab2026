@@ -11,6 +11,11 @@ import sys
 from pathlib import Path
 from typing import Iterable, List, Optional, Sequence, Set
 
+if __package__:
+    from .sync_ai_workflows import check_workflows
+else:
+    from sync_ai_workflows import check_workflows
+
 
 ROOT = Path(__file__).resolve().parents[1]
 PROMPT_PATH = re.compile(
@@ -40,6 +45,7 @@ ALWAYS_CHECK_EOL = {
     "openspec/config.yaml",
     "prompts/README.md",
     "scripts/check_governance.py",
+    "scripts/sync_ai_workflows.py",
     ".github/workflows/governance.yml",
 }
 
@@ -106,17 +112,43 @@ def status_violations(data: object) -> List[str]:
     return errors
 
 
-def rule_violations(agents: str, claude: str, cursor: str) -> List[str]:
+def rule_violations(
+    agents: str, claude: str, cursor: str, config: str, readme: str
+) -> List[str]:
     errors: List[str] = []
     if ".agents/skills/" in agents or ".agents/skills/" in cursor:
         errors.append("规则入口不得硬编码 .agents/skills/ 路径")
-    for term in ("Propose", "Apply", "Archive", "Commit", "lab-status.json"):
+    for term in (
+        "Propose", "Apply", "Archive", "Commit", "lab-status.json",
+        "明确实施授权优先", "快速修改", "直接处理", "完整 OpenSpec", "持续授权",
+    ):
         if term not in agents:
             errors.append(f"AGENTS.md 缺少阶段或状态声明：{term}")
     if claude != "@AGENTS.md\n":
         errors.append("CLAUDE.md 必须仅导入 @AGENTS.md")
     if "AGENTS.md" not in cursor or "/opsx-" not in cursor:
         errors.append("Cursor 入口必须指向根规则和原生 /opsx-* workflow")
+    for path, text, terms in (
+        ("openspec/config.yaml", config, ("AGENTS.md", "quick/direct edit", "authority persists", "without repeated approval")),
+        ("README.md", readme, ("快速", "文档和 LaTeX", "不逐任务或逐轮", "sync_ai_workflows.py")),
+        (".cursor/rules/openspec.mdc", cursor, ("快速", "持续", "已有授权不重复")),
+    ):
+        for term in terms:
+            if term not in text:
+                errors.append(f"{path}: 缺少分流或持续授权说明：{term}")
+    for path, text in (
+        ("AGENTS.md", agents), ("openspec/config.yaml", config),
+        ("README.md", readme), (".cursor/rules/openspec.mdc", cursor),
+    ):
+        for obsolete in (
+            "用户要求修改仓库、实现实验或生成内核代码时，必须先留下 OpenSpec 记录",
+            "修改仓库前先创建 change",
+            "Before implementation, create an OpenSpec change and obtain explicit apply authorization.",
+            "Confirm every edit with the user before writing",
+            "每次修改都必须重新批准",
+        ):
+            if obsolete in text:
+                errors.append(f"{path}: 恢复了已废止的全量规划或重复审批要求")
     return errors
 
 
@@ -250,10 +282,22 @@ def self_test() -> List[str]:
         "冲突状态被拒绝",
         bool(status_violations({"current": "lab1", "frozen": ["lab1"]})),
     )
-    expect(
-        "私有 skill 路径被拒绝",
-        bool(rule_violations(".agents/skills/x", "@AGENTS.md\n", "AGENTS.md /opsx-")),
-    )
+    valid_agents = "Propose Apply Archive Commit lab-status.json 明确实施授权优先 快速修改 直接处理 完整 OpenSpec 持续授权"
+    valid_cursor = "AGENTS.md /opsx- 快速 持续 已有授权不重复"
+    valid_config = "AGENTS.md quick/direct edit authority persists without repeated approval"
+    valid_readme = "快速 文档和 LaTeX 不逐任务或逐轮 sync_ai_workflows.py"
+    valid_rules = (valid_agents, "@AGENTS.md\n", valid_cursor, valid_config, valid_readme)
+    expect("合法直接维护及持续授权规则通过", not rule_violations(*valid_rules))
+    for index, obsolete, label in (
+        (0, ".agents/skills/x", "私有 skill 路径被拒绝"),
+        (0, "每次修改都必须重新批准", "逐次审批回退被拒绝"),
+        (2, "Confirm every edit with the user before writing", "平台提示词审批回退被拒绝"),
+        (3, "Before implementation, create an OpenSpec change and obtain explicit apply authorization.", "配置全量规划回退被拒绝"),
+        (4, "修改仓库前先创建 change", "README 全量规划回退被拒绝"),
+    ):
+        invalid_rules = list(valid_rules)
+        invalid_rules[index] += "\n" + obsolete
+        expect(label, bool(rule_violations(*invalid_rules)))
     expect(
         "冻结章节 diff 被拒绝",
         bool(check_scope(["lab2/kern/init.c"], "lab1", ["lab2"])),
@@ -338,9 +382,12 @@ def main() -> int:
         agents = (ROOT / "AGENTS.md").read_text(encoding="utf-8")
         claude = (ROOT / "CLAUDE.md").read_text(encoding="utf-8")
         cursor = (ROOT / ".cursor/rules/openspec.mdc").read_text(encoding="utf-8")
-        errors.extend(rule_violations(agents, claude, cursor))
+        config = (ROOT / "openspec/config.yaml").read_text(encoding="utf-8")
+        readme = (ROOT / "README.md").read_text(encoding="utf-8")
+        errors.extend(rule_violations(agents, claude, cursor, config, readme))
     except OSError as exc:
         errors.append(f"规则入口无法读取：{exc}")
+    errors.extend(check_workflows())
 
     changed = changed_paths(args.base)
     candidates = candidate_paths()

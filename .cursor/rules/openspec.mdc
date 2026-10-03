@@ -3,4 +3,4 @@ description: 自动加载仓库级 OpenSpec 与隐私规则
 alwaysApply: true
 ---
 
-始终遵守根目录 `AGENTS.md`。需要创建、实现或归档 OpenSpec change 时，使用 Cursor 提供的 `/opsx-propose`、`/opsx-apply`、`/opsx-archive` 原生 workflow，并严格遵守各阶段的独立授权边界。
+始终遵守根目录 `AGENTS.md`，先判断明确实施授权及快速、直接修改请求，再按影响分流。局部修复、文档和 LaTeX 编辑直接处理；已有授权范围内持续完成维护，不逐文件、任务或对话轮次请求批准。只对尚未批准的新需求或实质范围变化确认。需要 OpenSpec 时使用 Cursor 原生 `/opsx-propose`、`/opsx-apply`、`/opsx-archive`；技能和命令正文同样按根规则解释授权。归档和提交需明确授权，已有授权不重复索取。
