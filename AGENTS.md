@@ -38,6 +38,19 @@
 
 有 change 时，规格、相关 Prompt 证据和实现应一起进入最终提交；无 change 的直接维护保留实际 diff 和验证结果，不为了留痕创建空洞规划。
 
+## 分支规范
+
+实验分支按 dev → stable → release 流转，`LabX` 对应实验章节，大小写须保持一致，例如当前目录 `lab1/` 对应 `Lab1`：
+
+- **dev**：`Dev/LabX/UserName/branch`，实验代码的个人开发分支，例如 `Dev/Lab1/UserName/fix-boot`。`UserName` 为开发者标识，`branch` 为具体工作名，二者不能为空。
+- **stable**：`Dev/LabX/main`，该实验的稳定集成分支，例如 `Dev/Lab1/main`。dev 的 Pull Request 以对应 stable 为目标。
+- **release**：根级 `LabX`，最终实验提交分支，例如 `Lab1`。stable 的 Pull Request 以对应 release 为目标；不直接在 release 开发，不默认跳过 stable。
+- **非实验维护**：普通 `Dev/*`，例如 `Dev/docs` 或 `Dev/chore`，Pull Request 目标沿用根级 `main`；不要求实验和开发者层级。
+
+实验代码包括章节目录内的内核、库、构建和链接脚本；Markdown、LaTeX、PDF、图片等文档素材属于非实验代码。混合修改含实验代码时遵从实验分支要求；相关文档已在合法实验 dev/stable 分支上维护时，仍按该角色流转。
+
+实验 dev/stable 的 `LabX` 必须与 `lab-status.json.current` 对应，冻结章节限制仍生效。分支规范不会自动授权创建 release、归档、提交或推送。各 AI 工具使用同一标准，不自行替换开发分支前缀。本地和 CI 用 `scripts/check_governance.py` 检查源分支及已知 PR 目标；远程 `main` ruleset 仍仅保护 `main`，不代表已经部署 `LabX` 保护。
+
 ## 修改范围
 
 `lab-status.json` 是章节状态的唯一事实来源：

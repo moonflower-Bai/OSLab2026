@@ -34,6 +34,10 @@ TEXT_SUFFIXES = {
     ".txt",
     ".mk",
 }
+DOCUMENT_SUFFIXES = {
+    ".md", ".rst", ".txt", ".tex", ".sty", ".cls", ".bib", ".pdf",
+    ".png", ".jpg", ".jpeg", ".svg", ".gif", ".webp",
+}
 ALWAYS_CHECK_EOL = {
     ".gitattributes",
     ".gitignore",
@@ -121,6 +125,7 @@ def rule_violations(
     for term in (
         "Propose", "Apply", "Archive", "Commit", "lab-status.json",
         "明确实施授权优先", "快速修改", "直接处理", "完整 OpenSpec", "持续授权",
+        "Dev/LabX/UserName/branch", "Dev/LabX/main", "release",
     ):
         if term not in agents:
             errors.append(f"AGENTS.md 缺少阶段或状态声明：{term}")
@@ -129,9 +134,9 @@ def rule_violations(
     if "AGENTS.md" not in cursor or "/opsx-" not in cursor:
         errors.append("Cursor 入口必须指向根规则和原生 /opsx-* workflow")
     for path, text, terms in (
-        ("openspec/config.yaml", config, ("AGENTS.md", "quick/direct edit", "authority persists", "without repeated approval")),
-        ("README.md", readme, ("快速", "文档和 LaTeX", "不逐任务或逐轮", "sync_ai_workflows.py")),
-        (".cursor/rules/openspec.mdc", cursor, ("快速", "持续", "已有授权不重复")),
+        ("openspec/config.yaml", config, ("AGENTS.md", "quick/direct edit", "authority persists", "without repeated approval", "Dev/LabX/UserName/branch", "Dev/LabX/main", "root-level LabX")),
+        ("README.md", readme, ("快速", "文档和 LaTeX", "不逐任务或逐轮", "sync_ai_workflows.py", "Dev/LabX/UserName/branch", "Dev/LabX/main", "根级 `LabX`")),
+        (".cursor/rules/openspec.mdc", cursor, ("快速", "持续", "已有授权不重复", "Dev/LabX/UserName/branch", "Dev/LabX/main", "根级 `LabX`")),
     ):
         for term in terms:
             if term not in text:
@@ -260,6 +265,47 @@ def check_scope(paths: Iterable[str], current: str, frozen: Sequence[str]) -> Li
     return errors
 
 
+def is_experiment_code(path: str) -> bool:
+    chapter = path.split("/", 1)[0]
+    return (
+        bool(re.fullmatch(r"lab\d+", chapter))
+        and Path(path).suffix.lower() not in DOCUMENT_SUFFIXES
+    )
+
+
+def branch_violations(
+    paths: Iterable[str], branch: str, current: str, target: Optional[str] = None
+) -> List[str]:
+    paths = list(paths)
+    if not paths:
+        return []
+    errors: List[str] = []
+    lab = "Lab" + current.removeprefix("lab")
+    code_chapters = {p.split("/", 1)[0] for p in paths if is_experiment_code(p)}
+    if code_chapters - {current}:
+        errors.append(f"实验代码章节必须与当前章节 {current} 对应")
+    stable = re.fullmatch(r"Dev/(Lab\d+)/main", branch)
+    dev = re.fullmatch(r"Dev/(Lab\d+)/([^/\s]+)/([^/\s]+)", branch)
+    if stable or dev:
+        role = stable or dev
+        if role.group(1) != lab:
+            errors.append(f"实验分支 {branch} 的章节必须是 {lab}")
+        expected_target = lab if stable else f"Dev/{lab}/main"
+    elif code_chapters:
+        errors.append(
+            f"实验代码须使用 dev Dev/{lab}/UserName/branch 或 stable Dev/{lab}/main；当前分支为 {branch or 'detached HEAD'}"
+        )
+        return errors
+    elif re.fullmatch(r"Dev/[^/\s]+(?:/[^/\s]+)*", branch):
+        expected_target = "main"
+    else:
+        errors.append(f"非实验维护须使用非空 Dev/* 分支；当前分支为 {branch or 'detached HEAD'}")
+        return errors
+    if target is not None and target != expected_target:
+        errors.append(f"分支 {branch} 的 PR 目标应为 {expected_target}，实际为 {target}")
+    return errors
+
+
 def run_openspec_validation() -> List[str]:
     errors: List[str] = []
     for mode in ("--all", "--archived"):
@@ -282,10 +328,11 @@ def self_test() -> List[str]:
         "冲突状态被拒绝",
         bool(status_violations({"current": "lab1", "frozen": ["lab1"]})),
     )
-    valid_agents = "Propose Apply Archive Commit lab-status.json 明确实施授权优先 快速修改 直接处理 完整 OpenSpec 持续授权"
-    valid_cursor = "AGENTS.md /opsx- 快速 持续 已有授权不重复"
-    valid_config = "AGENTS.md quick/direct edit authority persists without repeated approval"
-    valid_readme = "快速 文档和 LaTeX 不逐任务或逐轮 sync_ai_workflows.py"
+    branch_terms = "Dev/LabX/UserName/branch Dev/LabX/main release"
+    valid_agents = "Propose Apply Archive Commit lab-status.json 明确实施授权优先 快速修改 直接处理 完整 OpenSpec 持续授权 " + branch_terms
+    valid_cursor = "AGENTS.md /opsx- 快速 持续 已有授权不重复 根级 `LabX` " + branch_terms
+    valid_config = "AGENTS.md quick/direct edit authority persists without repeated approval root-level LabX " + branch_terms
+    valid_readme = "快速 文档和 LaTeX 不逐任务或逐轮 sync_ai_workflows.py 根级 `LabX` " + branch_terms
     valid_rules = (valid_agents, "@AGENTS.md\n", valid_cursor, valid_config, valid_readme)
     expect("合法直接维护及持续授权规则通过", not rule_violations(*valid_rules))
     for index, obsolete, label in (
@@ -306,6 +353,36 @@ def self_test() -> List[str]:
         "非当前章节 diff 被拒绝",
         bool(check_scope(["lab3/kern/init.c"], "lab1", [])),
     )
+    for paths, branch, target, passes in (
+        (["lab1/kern/init/init.c"], "Dev/Lab1/UserName/fix-boot", "Dev/Lab1/main", True),
+        (["lab1/kern/init/entry.S"], "Dev/Lab1/main", "Lab1", True),
+        (["lab1/tools/kernel.ld", "README.md"], "Dev/Lab1/UserName/link", None, True),
+        (["README.md"], "Dev/docs", "main", True),
+        (["lab1/report.tex", "lab1/AGENTS.md"], "Dev/docs", "main", True),
+        (["lab1/report.tex"], "Dev/Lab1/main", "Lab1", True),
+        (["lab1/Makefile"], "Dev/fix", None, False),
+        (["lab1/kern/init/init.c"], "Dev/Lab2/UserName/fix", None, False),
+        (["lab1/kern/init/init.c"], "Dev/Lab1/UserName", None, False),
+        (["lab1/kern/init/init.c"], "Dev/Lab1/UserName/fix/nested", None, False),
+        (["lab1/kern/init/init.c"], "Dev/Lab1/UserName/fix", "Lab1", False),
+        (["lab1/kern/init/init.c"], "Dev/Lab1/main", "Dev/Lab1/main", False),
+        (["lab1/kern/init/init.c"], "Dev/Lab1/main", "main/Lab1", False),
+        (["lab1/kern/init/init.c"], "Dev/Lab1/main", "Lab2", False),
+        (["lab1/kern/init/init.c"], "Lab1", None, False),
+        (["lab2/kern/init/init.c"], "Dev/Lab1/UserName/fix", None, False),
+        (["README.md"], "Dev/docs", "Lab1", False),
+        (["README.md"], "main", None, False),
+        (["README.md"], "Dev/", None, False),
+        (["README.md"], "", None, False),
+    ):
+        expect(
+            f"分支矩阵 {branch or 'detached HEAD'} → {target}",
+            (not branch_violations(paths, branch, "lab1", target)) == passes,
+        )
+    for code_path in ("lab1/Makefile", "lab1/tools/kernel.ld", "lab1/kern/init/entry.S"):
+        expect(f"实验代码分类 {code_path}", is_experiment_code(code_path))
+    for doc_path in ("lab1/AGENTS.md", "lab1/report.tex", "lab1/report.cls", "lab1/figure.svg", "README.md"):
+        expect(f"非实验文档分类 {doc_path}", not is_experiment_code(doc_path))
     safe = (
         "# User Prompts\n\n"
         "change: demo\n"
@@ -350,6 +427,8 @@ def self_test() -> List[str]:
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base", help="用于章节范围检查的 Git 基线提交")
+    parser.add_argument("--branch", help="待验证的开发分支；默认读取当前符号分支")
+    parser.add_argument("--target", help="PR 目标分支；未提供时只验证源分支")
     parser.add_argument(
         "--self-test",
         action="store_true",
@@ -393,6 +472,11 @@ def main() -> int:
     candidates = candidate_paths()
     if isinstance(current, str) and isinstance(frozen, list):
         errors.extend(check_scope(changed, current, frozen))
+        branch = args.branch
+        if branch is None:
+            proc = run(["git", "symbolic-ref", "--quiet", "--short", "HEAD"])
+            branch = proc.stdout.strip() if proc.returncode == 0 else ""
+        errors.extend(branch_violations(changed, branch, current, args.target))
     errors.extend(check_eol(changed))
     errors.extend(check_prompt_gate(candidates))
     errors.extend(run_openspec_validation())

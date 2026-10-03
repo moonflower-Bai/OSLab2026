@@ -7,6 +7,9 @@ context: |
   This repository is the 2026 riscv64 ucore operating-system lab, with one skeleton per chapter.
   lab-status.json is the source of truth for the current and frozen chapters.
   Experiment implementation may change only the current chapter and must never change a frozen chapter.
+  Follow AGENTS.md branch conventions: experiment dev is Dev/LabX/UserName/branch, stable is Dev/LabX/main, and release is root-level LabX; X matches the current chapter.
+  Experiment pull requests flow dev to stable to release. Ordinary non-experiment maintenance uses Dev/* with main as its pull request target; pure document/LaTeX edits do not require a developer hierarchy.
+  Branch conventions do not authorize branch creation, commits, archives, or pushes. Reuse the user's explicit scope authority for those operations.
   OpenSpec artifacts, change-level prompt evidence, governance rules, CI, and repository documentation are workflow metadata and may be changed within the authorized request.
   Follow AGENTS.md routing before selecting a workflow: explicit implementation approval or a quick/direct edit request authorizes direct execution of that scope without another apply message or mandatory planning artifacts.
   Routine fixes restoring existing behavior and document/LaTeX edits use direct maintenance without creating a change.
