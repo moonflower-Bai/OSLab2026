@@ -10,6 +10,11 @@ metadata:
   generatedBy: "1.13.1"
 ---
 
+<!-- repository-authorization:start -->
+**Repository authorization:** Read the root `AGENTS.md` before using this workflow. Its routing and scope authorization rules control the confirmation steps below: honor explicit implementation approval and quick/direct edit requests, reuse applicable authority, and ask only for unapproved requirement increments. If routing selects direct maintenance, perform that edit and validation without running the planning steps below. A proposal-only or discussion request remains planning-only. This workflow does not grant archive or commit authority.
+**Repository branches:** Follow the root AGENTS.md experiment dev/stable/release and non-experiment branch conventions, including their pull request targets. Do not substitute a tool-specific branch prefix or infer authority to create or push submission branches.
+<!-- repository-authorization:end -->
+
 Revise a change's existing planning artifacts and keep them coherent. Never edit code.
 
 **Store selection:** If the user names a store (a store is a standalone OpenSpec repo registered on this machine) or the work lives in one, run `openspec store list --json` to discover registered store ids, then pass `--store <id>` on the commands that read or write specs and changes (`new change`, `status`, `instructions`, `list`, `show`, `validate`, `archive`, `doctor`, `context`, `schemas`, `view`). Once selected, treat `--store <id>` as sticky for the rest of the workflow. Every unscoped example of those commands below is shorthand: before running it, append the flag. For example, run `openspec status --change "<name>" --json --store "<id>"`, not the unscoped form shown below. Other commands do not take the flag. Hints printed by commands already carry the flag; keep it on follow-ups. Without a store, commands act on the nearest local `openspec/` root.
@@ -73,18 +78,18 @@ This workflow revises artifacts that already exist; it never creates missing one
    - Propose revisions only to files that already exist (`existingOutputPaths`). Do NOT create artifacts that don't exist yet, and do NOT invent new files under a glob artifact - note them and point the user to `openspec instructions "<artifact-id>" --change "<name>" --json` for how to create them.
    - If the change is already coherent, say so and propose no revisions.
 
-5. **Confirm and apply, one artifact at a time**
+5. **Apply revisions within the authorized scope**
    - This step performs every artifact write in this workflow; no earlier step edits an artifact.
-   - Show each proposed revision and why - including the requested edit drafted in step 4. Write only after the user confirms.
+   - Explain the revisions and why. The user's explicit revision request or applicable maintenance authority already covers in-scope edits; write the coherent revisions without approval for each artifact. Ask only about unapproved requirement increments.
    - If the user rejects a revision, do not write it - leave that artifact unchanged.
    - When a substantial rewrite is needed, get that artifact's rules and template first:
      ```bash
      openspec instructions "<artifact-id>" --change "<name>" --json
      ```
 
-6. **Point to the next step (guidance only - NEVER act on it)**
+6. **Continue only with applicable implementation authority**
    - Artifacts still missing -> run `openspec status --change "<name>" --json` for the next artifact and point the user to `openspec instructions "<artifact-id>" --change "<name>" --json` for how to create it.
-   - Change already implemented (tasks checked off / already applied) -> the code may no longer match the revised plan; suggest `/opsx:apply` to carry the delta into code.
+   - If the revised plan needs implementation, continue with the native apply workflow when explicitly approved or directly requested; otherwise request the missing authority. Completed checkboxes alone never establish authority.
    - Everything done and implemented -> suggest `/opsx:archive`.
 
 **Output**
@@ -95,9 +100,9 @@ After each invocation, show:
 - Where the change stands and the recommended next command
 
 **Guardrails**
-- Planning artifacts only - NEVER edit implementation code. If the revised plan implies code changes, stop and point to `/opsx:apply`.
+- This action edits existing planning artifacts. If the request is planning-only, do not implement; if implementation is explicitly approved or a quick/direct edit is requested, continue via the authorized maintenance or native apply path without requiring a new user message.
 - Use the artifact ids and paths reported by `openspec status`; never branch on hardcoded artifact names.
 - Edit only the concrete files in `existingOutputPaths`; never write to a glob `resolvedOutputPath`.
 - Do not advance the build frontier: no new artifacts, no new files under glob artifacts - creating them is a separate step, outside this workflow.
-- Confirm every edit with the user before writing.
+- Reuse the user's revision or maintenance authority for in-scope edits; confirm only new unapproved requirements, not each file or artifact.
 - If the request changes the change's *intent* rather than refining it, ask for a distinct unused change name and recommend `openspec new change "<new-change-name>"` instead (the "Update vs. Start Fresh" heuristic).

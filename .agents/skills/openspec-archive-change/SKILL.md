@@ -10,6 +10,11 @@ metadata:
   generatedBy: "1.13.1"
 ---
 
+<!-- repository-authorization:start -->
+**Repository authorization:** Read the root `AGENTS.md` before using this workflow. Its routing and scope authorization rules control the confirmation steps below: honor explicit implementation approval and quick/direct edit requests, reuse applicable authority, and ask only for unapproved requirement increments. If routing selects direct maintenance, perform that edit and validation without running the planning steps below. A proposal-only or discussion request remains planning-only. This workflow does not grant archive or commit authority.
+**Repository branches:** Follow the root AGENTS.md experiment dev/stable/release and non-experiment branch conventions, including their pull request targets. Do not substitute a tool-specific branch prefix or infer authority to create or push submission branches.
+<!-- repository-authorization:end -->
+
 Archive a completed change in the experimental workflow.
 
 **Store selection:** If the user names a store (a store is a standalone OpenSpec repo registered on this machine) or the work lives in one, run `openspec store list --json` to discover registered store ids, then pass `--store <id>` on the commands that read or write specs and changes (`new change`, `status`, `instructions`, `list`, `show`, `validate`, `archive`, `doctor`, `context`, `schemas`, `view`). Once selected, treat `--store <id>` as sticky for the rest of the workflow. Every unscoped example of those commands below is shorthand: before running it, append the flag. For example, run `openspec status --change "<name>" --json --store "<id>"`, not the unscoped form shown below. Other commands do not take the flag. Hints printed by commands already carry the flag; keep it on follow-ups. Without a store, commands act on the nearest local `openspec/` root.
@@ -118,12 +123,12 @@ In both branches, never create the root as a side effect: do not run `openspec i
    - Determine what changes would be applied (adds, modifications, removals, renames)
    - Continue assessing the remaining capabilities even when one is sync-blocked. Show a combined summary before prompting.
 
-   **Prompt options:**
+   **Reuse archive authority:** A valid archive request includes normal spec sync under AGENTS.md. If no capability is sync-blocked, honor an explicit sync preference or sync needed deltas and archive directly; when already synced, archive directly. Prompt only for unresolved conflicts, skipping required sync, or unapproved exceptions. For those decisions, offer:
    - If any capability is sync-blocked: explain why and offer only "Archive without syncing", "Cancel"
    - Otherwise, if changes needed: "Sync now (recommended)", "Archive without syncing"
    - Otherwise, if already synced: "Archive now", "Sync anyway", "Cancel"
 
-   Route on the answer:
+   Route on the applicable existing choice, or the answer to a genuinely missing decision:
    - "Cancel" — stop, do not archive
    - "Archive without syncing" or "Archive now" — proceed to archive
    - "Sync now" or "Sync anyway" — sync, then verify (below). Do not start any sync while a capability is sync-blocked; explain the blocker and repeat the available choices.
@@ -190,14 +195,14 @@ In both branches, never create the root as a side effect: do not run `openspec i
 **Guardrails**
 - Announce the selected change; prompt for selection when it is ambiguous
 - Use artifact graph (openspec status --json) for completion checking
-- Don't block archive on warnings - just inform and confirm
+- Reuse applicable archive authority; incomplete-work exceptions still need explicit authority, while routine successful archive and sync do not need repeated confirmation.
 - Preserve .openspec.yaml when moving to archive (it moves with the directory)
 - Show clear summary of what happened
 - If sync is requested, run the `openspec-sync-specs` workflow inline (agent-driven)
 - Never archive while a spec sync is still in flight — run the sync inline and verify the main specs before moving `changeRoot`
-- If delta specs exist, always run the sync assessment and show the combined summary before prompting
+- If delta specs exist, assess and summarize their sync state; prompt only when a material decision is not already authorized.
 - Apply relevant runtime context and report conflicts; operation guidance remains advisory
 - Consider every guidance entry and explain any inapplicable or conflicting advice
-- Existing CLI checks, resolved paths, prompts, and command contracts are unchanged
+- Preserve CLI checks, resolved paths, and command contracts; interpret confirmation prompts using existing scope authority from AGENTS.md.
 - Artifact rules constrain only the specs being written and are never operation guidance
 - Never copy runtime context, operation guidance, or artifact-rule text verbatim into output files
