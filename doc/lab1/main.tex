@@ -211,113 +211,107 @@ QEMU 将内核映像加载到 \texttt{0x80200000}；OpenSBI 完成初始化后�
 程序不需要返回到 \texttt{entry.S}，因此使用尾调用可以简化内核启动过程。
 
 \subsection{练习二：使用 GDB 验证启动流程}
-\subsubsection{调试启动与记录方法}
-在实验目录中，分别在两个终端执行：
-\begin{verbatim}
-make debug
-make gdb
-\end{verbatim}
-以下代码块是待执行或整理的命令清单，不表示已执行的实验结果。
-可在 GDB 中开启文本日志，结束后关闭；截图或实际输出放在对应小节。
-\begin{verbatim}
-set pagination off
-set logging file lab1-gdb.txt
-set logging overwrite on
-set logging enabled on
-\end{verbatim}
-旧版 GDB 若不支持最后一条命令，可使用 \texttt{set logging on}。
+以下摘录本次调试中已获得的有效输出，按启动阶段组织。
 
 \subsubsection{复位地址与最初六条指令}
-重新启动调试会话，在尚未继续运行时记录：
 \begin{verbatim}
-info registers pc t0 a0 a1 a2
-x/6i 0x1000
-x/2gx 0x1018
-si
-info registers pc t0 a0 a1 a2
+(gdb) x/10i 0x1000
+   0x1000: auipc t0,0x0
+=> 0x1004: addi  a2,t0,40
+   0x1008: csrr  a0,mhartid
+   0x100c: ld    a1,32(t0)
+   0x1010: ld    t0,24(t0)
+   0x1014: jr    t0
 \end{verbatim}
-重复单步与寄存器查看，直到复位代码跳转到 OpenSBI。
-待插入实际输出，回答最初指令的位置和功能。注意：
-\texttt{0x1018} 与 \texttt{0x1020} 是数据位置，不应按指令解释。
+这里只保留六条启动指令；原输出从 \texttt{0x1018} 开始是将数据
+按指令解码的结果。箭头表明采集时已执行第一条指令，暂停在 \texttt{0x1004}。
+\begin{verbatim}
+(gdb) x/2gx 0x1018
+0x1018: 0x0000000080000000  0x0000000087e00000
+\end{verbatim}
+第一条指令使 \texttt{t0 = 0x1000}；随后设置
+\texttt{a2 = 0x1028}，读取 hart ID 到 \texttt{a0}，并将设备树地址
+\texttt{0x87e00000} 读入 \texttt{a1}。
+\texttt{ld t0,24(t0)} 的读取地址为
+\texttt{0x1000 + 24 = 0x1018}，读到 \texttt{0x80000000} 后，
+\texttt{jr t0} 跳转到 OpenSBI。
 
-\subsubsection{OpenSBI 入口与内核控制权交接}
+\subsubsection{OpenSBI 入口寄存器与指令}
+在 \texttt{0x80000000} 断点处，寄存器输出的关键部分如下：
 \begin{verbatim}
-b *0x80000000
-b *0x80200000
-continue
-info registers pc sp t0 a0 a1 a2
-x/6i $pc
-continue
-info registers pc sp ra a0 a1 a2
-x/8i $pc
+ra  0x0         0x0
+sp  0x0         0x0
+t0  0x80000000  2147483648
+a0  0x0         0
+a1  0x87e00000  2279604224
+a2  0x1028      4136
+pc  0x80000000  0x80000000
 \end{verbatim}
-上述断点应在目标地址到达前设置；若已越过目标，重新启动调试。
-待记录两个断点的命中情况及寄存器变化。当前配置中，OpenSBI 入口为
-\texttt{0x80000000}，内核入口为 \texttt{0x80200000}。
+入口反汇编摘录如下：
+\begin{verbatim}
+(gdb) x/30i 0x80000000
+   0x80000000: add s0,a0,zero
+   0x80000004: add s1,a1,zero
+   0x80000008: add s2,a2,zero
+   0x8000000c: jal 0x80000678
+   0x80000010: add a6,a0,zero
+   0x80000014: add a0,s0,zero
+   0x80000018: add a1,s1,zero
+   0x8000001c: add a2,s2,zero
+\end{verbatim}
+这些指令属于 OpenSBI，尚未进入本实验的内核入口。
 
-\subsubsection{练习二问题回答}
-\paragraph{加电后最初执行的指令位于什么地址？}
-待结合复位时的 PC 与反汇编结果回答。
-\paragraph{最初几条指令主要完成了哪些功能？}
-待解释基准地址、hart ID、设备树地址、启动参数地址和跳转目标。
-\paragraph{如何验证控制权已经交给内核？}
-待结合 \texttt{0x80200000} 处的断点与入口指令回答。
+\subsubsection{内核入口与初始化指令}
+\begin{verbatim}
+(gdb) x/10i $pc
+=> 0x80200000 <kern_entry>:    auipc sp,0x3
+   0x80200004 <kern_entry+4>:  mv    sp,sp
+   0x80200008 <kern_entry+8>:  j     0x8020000a <kern_init>
+   0x8020000a <kern_init>:     auipc a0,0x3
+   0x8020000e <kern_init+4>:   addi  a0,a0,-2
+   0x80200012 <kern_init+8>:   auipc a2,0x3
+   0x80200016 <kern_init+12>:  addi  a2,a2,-10
+   0x8020001a <kern_init+16>:  addi  sp,sp,-16
+   0x8020001c <kern_init+18>:  li    a1,0
+   0x8020001e <kern_init+20>:  sub   a2,a2,a0
+\end{verbatim}
+PC 已到达 \texttt{0x80200000}，验证控制权交给了内核。
+入口前两条指令将栈指针设置为 \texttt{0x80203000}，随后跳到
+\texttt{kern\_init}。初始化指令准备 BSS 清零的参数；从此反汇编计算得到
+\texttt{a0}、\texttt{a2} 最初都为 \texttt{0x80203008}，相减后长度为零。
+这些数值由指令推算，未另行采集执行后的寄存器输出。
 
-\subsection{补充观察：内核栈、初始化与格式化输出}
-\subsubsection{启动栈初始化}
-在 \texttt{kern\_entry} 断点处执行：
+\subsection{补充观察：输出调用与死循环}
+\subsubsection{cprintf 调用与返回地址}
 \begin{verbatim}
-p/x &bootstack
-p/x &bootstacktop
-info registers pc sp
-x/3i $pc
-si
-info registers pc sp
-si
-info registers pc sp
-x/4gx $sp
+0x0000000080200036 <+44>: 01e000ef jal 0x80200054 <cprintf>
+0x000000008020003a <+48>: a001     j   0x8020003a <kern_init+48>
 \end{verbatim}
-待比较初始化前后的栈指针。栈顶后的数据不代表已经分配的栈内容。
+\texttt{jal} 调用 \texttt{cprintf} 并将下一条指令地址
+\texttt{0x8020003a} 写入 \texttt{ra}。文本输出在被调用函数及其底层输出函数中完成。
 
-\subsubsection{进入 kern\_init 与 BSS 清零}
+\subsubsection{进入固件后无法使用 finish}
 \begin{verbatim}
-b kern_init
-continue
-disassemble /r kern_init
-p/x &edata
-p/x &end
-p/d (char *)&end - (char *)&edata
-info registers pc sp a0 a1 a2
+(gdb) finish
+"finish" not meaningful in the outermost frame.
+(gdb) bt
+#0  0x000000008000caae in ?? ()
 \end{verbatim}
-待结合反汇编解释 \texttt{memset(edata, 0, end - edata)}。
-观察调用参数时，应单步至调用前，再查看 \texttt{a0}、\texttt{a1}、\texttt{a2}。
-
-\subsubsection{cprintf 调用、字符串参数与返回}
-先从 \texttt{kern\_init} 反汇编找到调用位置，停在调用前查看：
-\begin{verbatim}
-info registers a0 a1 ra
-x/s $a0
-x/s $a1
-ni
-\end{verbatim}
-\texttt{ni} 用于执行调用而不进入函数内部。若已进入 OpenSBI 且无法使用
-\texttt{finish}，可在调用后的指令设置临时断点。
-本次已观察到的返回位置为 \texttt{0x8020003a}；重新编译后应重新核对地址。
-\begin{verbatim}
-tbreak *0x8020003a
-continue
-\end{verbatim}
-待记录 QEMU 控制台的实际输出。
+此时地址位于 OpenSBI 范围，GDB 未能识别完整调用栈，不能据此认定
+当前函数确实是程序最外层函数。
 
 \subsubsection{输出完成后的死循环}
+输出完成后，反汇编的有效摘录如下：
 \begin{verbatim}
-info registers pc
-x/1i $pc
-si
-info registers pc
-set logging enabled off
+(gdb) x/10i $pc
+=> 0x8020003a <kern_init+48>: j    0x8020003a <kern_init+48>
+   0x8020003c <cputch>:      addi sp,sp,-32
+   0x8020003e <cputch+2>:    sd   ra,24(sp)
+   0x80200040 <cputch+4>:    sd   a1,8(sp)
+   0x80200042 <cputch+6>:    jal  0x80200088 <cons_putc>
 \end{verbatim}
-旧版 GDB 可使用 \texttt{set logging off}。待说明单步后 PC 为什么不变。
+当前指令跳回自身，对应 \texttt{while (1)}。
+紧邻的 \texttt{cputch} 是独立函数，内存地址相邻不意味着死循环后会执行它。
 
 \subsection{AI 辅助学习与调试过程}
 本实验未进行代码生成或功能修改，功能实现提示词与代码实现迭代不适用。
