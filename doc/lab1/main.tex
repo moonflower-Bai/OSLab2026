@@ -1,6 +1,6 @@
 % -*- coding: utf-8 -*-
 %-------------------------designed by zcf--------------
-\documentclass[UTF8,a4paper,10pt]{ctexart}
+\documentclass[UTF8,a4paper,10pt,fontset=fandol]{ctexart}
 \usepackage[left=3.17cm, right=3.17cm, top=2.74cm, bottom=2.74cm]{geometry}
 \usepackage{amsmath}
 \usepackage{graphicx,subfig}
@@ -14,7 +14,7 @@
 %-------------------------字体设置--------------
 % \usepackage{times} 
 \usepackage{ctex}
-% 使用 ctex 在 Windows 上自动选择的中文字体，避免依赖未安装的 Noto Serif CJK SC。
+% 使用 TeX Live 自带的 Fandol 中文字体，避免依赖系统字体。
 \newcommand{\yihao}{\fontsize{26pt}{36pt}\selectfont}           % 一号, 1.4 倍行距
 \newcommand{\erhao}{\fontsize{22pt}{28pt}\selectfont}          % 二号, 1.25倍行距
 \newcommand{\xiaoer}{\fontsize{18pt}{18pt}\selectfont}          % 小二, 单倍行距
@@ -35,7 +35,7 @@
 \pagestyle{fancy}
 \lhead{\kaishu \leftmark}
 % \chead{}
-\rhead{\kaishu 编译原理}%加粗\bfseries 
+\rhead{\kaishu 操作系统}%加粗\bfseries
 \lfoot{}
 \cfoot{\thepage}
 \rfoot{}
@@ -151,11 +151,33 @@ rulesepcolor= \color{ red!20!green!20!blue!20}
 \newpage
 \watermark{60}{10}{NKU}
 \setcounter{page}{1}
-\section{实验目的}
-\section{最小内核的启动过程}
-\section{练习一}
+\section{实验基本信息与小组分工}
+\subsection{实验名称与完成日期}
+Lab1：最小可执行内核。完成日期：待填写。
+\subsection{练习分工}
+待填写各成员负责的练习与调试任务。
+\subsection{报告分工}
+待填写各成员负责的报告内容。
 
-\subsection*{1. \texttt{la sp, bootstacktop}}
+\section{实验目的}
+待填写本实验的学习目标。
+
+\section{实验环境}
+\subsection{硬件、操作系统与工具链}
+待填写实际环境及 QEMU、GDB、RISC-V 工具链版本。
+\subsection{AI 工具与模型}
+待填写本实验实际使用的工具、模型；未记录的版本如实注明。
+
+\section{实验整体逻辑分析}
+\subsection{本章节的逻辑主线}
+待说明复位代码、OpenSBI、内核入口、初始化与输出之间的关系。
+\subsection{功能的逐步执行与核心模块}
+待结合链接脚本、入口汇编、初始化函数和输出模块说明执行顺序。
+
+\section{实验内容与练习解答}
+\subsection{练习一：理解内核启动中的程序入口操作}
+
+\subsubsection{\texttt{la sp, bootstacktop} 的操作与目的}
 
 \texttt{la} 是一条加载地址的伪指令。\texttt{la sp, bootstacktop} 会将符号
 \texttt{bootstacktop} 的地址加载到栈指针寄存器 \texttt{sp} 中。
@@ -178,24 +200,147 @@ bootstacktop:
 
 需要区分 QEMU 启动过程中的几个地址：CPU 复位后从
 \texttt{0x1000} 开始执行，随后进入位于约 \texttt{0x80000000} 的 OpenSBI；
-OpenSBI 完成初始化后，将内核加载到 \texttt{0x80200000}，再把控制权交给
+QEMU 将内核映像加载到 \texttt{0x80200000}；OpenSBI 完成初始化后，把控制权交给
 内核入口 \texttt{kern\_entry}。
 
-\subsection*{2. \texttt{tail kern\_init}}
+\subsubsection{\texttt{tail kern\_init} 的操作与目的}
 
 \texttt{tail kern\_init} 将控制权转移到 C 语言函数 \texttt{kern\_init}，
 开始执行内核初始化代码。该指令采用尾调用形式，不再为返回到
 \texttt{entry.S} 额外保存新的返回地址。由于内核初始化完成后会进入死循环，
 程序不需要返回到 \texttt{entry.S}，因此使用尾调用可以简化内核启动过程。
 
-\section{练习二}
+\subsection{练习二：使用 GDB 验证启动流程}
+\subsubsection{调试启动与记录方法}
+在实验目录中，分别在两个终端执行：
+\begin{verbatim}
+make debug
+make gdb
+\end{verbatim}
+以下代码块是待执行或整理的命令清单，不表示已执行的实验结果。
+可在 GDB 中开启文本日志，结束后关闭；截图或实际输出放在对应小节。
+\begin{verbatim}
+set pagination off
+set logging file lab1-gdb.txt
+set logging overwrite on
+set logging enabled on
+\end{verbatim}
+旧版 GDB 若不支持最后一条命令，可使用 \texttt{set logging on}。
 
-使用 \texttt{make debug} 命令启动 QEMU ，将OpenSBI加载到 \texttt{0x80200000}，并将内核映像加载到 \texttt{0x80200000}。同时，在另外一个终端中使用 \texttt{make gdb} 命令启动 GDB，连接到 QEMU 的调试端口。通过 GDB 可以设置断点、单步执行和查看寄存器状态，从而观察内核的启动过程和调试内核代码。
+\subsubsection{复位地址与最初六条指令}
+重新启动调试会话，在尚未继续运行时记录：
+\begin{verbatim}
+info registers pc t0 a0 a1 a2
+x/6i 0x1000
+x/2gx 0x1018
+si
+info registers pc t0 a0 a1 a2
+\end{verbatim}
+重复单步与寄存器查看，直到复位代码跳转到 OpenSBI。
+待插入实际输出，回答最初指令的位置和功能。注意：
+\texttt{0x1018} 与 \texttt{0x1020} 是数据位置，不应按指令解释。
 
+\subsubsection{OpenSBI 入口与内核控制权交接}
+\begin{verbatim}
+b *0x80000000
+b *0x80200000
+continue
+info registers pc sp t0 a0 a1 a2
+x/6i $pc
+continue
+info registers pc sp ra a0 a1 a2
+x/8i $pc
+\end{verbatim}
+上述断点应在目标地址到达前设置；若已越过目标，重新启动调试。
+待记录两个断点的命中情况及寄存器变化。当前配置中，OpenSBI 入口为
+\texttt{0x80000000}，内核入口为 \texttt{0x80200000}。
 
-\section{实验结果和问题总结}
-%----------------------------------------------------------------
-\section{总结}
+\subsubsection{练习二问题回答}
+\paragraph{加电后最初执行的指令位于什么地址？}
+待结合复位时的 PC 与反汇编结果回答。
+\paragraph{最初几条指令主要完成了哪些功能？}
+待解释基准地址、hart ID、设备树地址、启动参数地址和跳转目标。
+\paragraph{如何验证控制权已经交给内核？}
+待结合 \texttt{0x80200000} 处的断点与入口指令回答。
+
+\subsection{补充观察：内核栈、初始化与格式化输出}
+\subsubsection{启动栈初始化}
+在 \texttt{kern\_entry} 断点处执行：
+\begin{verbatim}
+p/x &bootstack
+p/x &bootstacktop
+info registers pc sp
+x/3i $pc
+si
+info registers pc sp
+si
+info registers pc sp
+x/4gx $sp
+\end{verbatim}
+待比较初始化前后的栈指针。栈顶后的数据不代表已经分配的栈内容。
+
+\subsubsection{进入 kern\_init 与 BSS 清零}
+\begin{verbatim}
+b kern_init
+continue
+disassemble /r kern_init
+p/x &edata
+p/x &end
+p/d (char *)&end - (char *)&edata
+info registers pc sp a0 a1 a2
+\end{verbatim}
+待结合反汇编解释 \texttt{memset(edata, 0, end - edata)}。
+观察调用参数时，应单步至调用前，再查看 \texttt{a0}、\texttt{a1}、\texttt{a2}。
+
+\subsubsection{cprintf 调用、字符串参数与返回}
+先从 \texttt{kern\_init} 反汇编找到调用位置，停在调用前查看：
+\begin{verbatim}
+info registers a0 a1 ra
+x/s $a0
+x/s $a1
+ni
+\end{verbatim}
+\texttt{ni} 用于执行调用而不进入函数内部。若已进入 OpenSBI 且无法使用
+\texttt{finish}，可在调用后的指令设置临时断点。
+本次已观察到的返回位置为 \texttt{0x8020003a}；重新编译后应重新核对地址。
+\begin{verbatim}
+tbreak *0x8020003a
+continue
+\end{verbatim}
+待记录 QEMU 控制台的实际输出。
+
+\subsubsection{输出完成后的死循环}
+\begin{verbatim}
+info registers pc
+x/1i $pc
+si
+info registers pc
+set logging enabled off
+\end{verbatim}
+旧版 GDB 可使用 \texttt{set logging off}。待说明单步后 PC 为什么不变。
+
+\subsection{AI 辅助学习与调试过程}
+本实验未进行代码生成或功能修改，功能实现提示词与代码实现迭代不适用。
+待如实整理 AI 的实际用途、遇到的误判以及通过源码和调试结果核验的过程；
+不补造原始提示词或对话记录。
+
+\section{测试与验证}
+\subsection{编译与运行结果}
+待放入实际 \texttt{make}、\texttt{make qemu} 输出或截图。
+\subsection{启动流程的 GDB 验证结果}
+待汇总复位地址、OpenSBI 入口、内核入口、栈指针变化和最终输出证据。
+\subsection{验证范围与未执行项目}
+待说明实际验证范围；未运行评分脚本时，不填写 \texttt{make grade} 通过。
+
+\section{实验总结与收获}
+\subsection{实验知识点与操作系统原理的联系和差异}
+待整理启动流程、内存布局、栈、特权级与固件接口等知识点。
+\subsection{重要但本实验尚未涉及的操作系统知识点}
+待说明进程调度、虚拟内存、文件系统等尚未涉及的内容。
+\subsection{调试中遇到的问题与解决方法}
+待整理地址混淆、数据误反汇编、OpenSBI 中无法回溯等实际问题。
+\subsection{AI 协作经验与个人收获}
+待填写实际经验与学习收获。
 
 %----------------------------------------------------------------
 \newpage
