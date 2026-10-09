@@ -1,0 +1,40 @@
+{
+  // LaTeX Workshop 配置：直接用 latexmk + xelatex 编译，产物统一进 out/。
+  //
+  // 为什么必须钉死 -xelatex：
+  //   ctexart 中文文档用 pdflatex 编译会走虚拟字体的 mktexpk 现场造位图字体，
+  //   在 macOS 上必然失败，报致命错误
+  //       !pdfTeX error: pdflatex (file unihei60): Font unihei60 at 864 not found
+  //   扩展默认的 "latexmk" 配方 args 里带 -pdf（即 pdflatex），所以不能用它。
+  //   下面把 -xelatex 直接写在命令里，行为不依赖任何 .latexmkrc，
+  //   也不受 latexmk「只在当前目录和 $HOME 找配置文件」的影响。
+  //
+  // 输出位置：outDir = %DIR%/out，扩展会把它展开成 -outdir=<文档目录>/out，
+  //   所以 PDF 和中间文件都落在 doc/lab1/out/，源码目录保持干净。
+  "latex-workshop.latex.tools": [
+    {
+      "name": "latexmk-xelatex",
+      "command": "latexmk",
+      "args": [
+        "-xelatex",
+        "-synctex=1",
+        "-interaction=nonstopmode",
+        "-file-line-error",
+        "-outdir=%OUTDIR%",
+        "%DOC%"
+      ],
+      "env": {}
+    }
+  ],
+  "latex-workshop.latex.recipes": [
+    {
+      "name": "latexmk (xelatex -> out/)",
+      "tools": ["latexmk-xelatex"]
+    }
+  ],
+  // 只有一个配方，默认就是它；显式写出来免得残留的 lastUsed 生效。
+  "latex-workshop.latex.recipe.default": "first",
+  // 内置 PDF 阅读器和清理命令按这个路径找产物；
+  // 不设的话默认是 %DIR%，会去 doc/lab1/ 下找而找不到。
+  "latex-workshop.latex.outDir": "%DIR%/out"
+}

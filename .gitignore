@@ -4,6 +4,9 @@
 obj/
 bin/
 
+# LaTeX 构建产物（.vscode/settings.json 里 outDir = %DIR%/out）
+doc/**/out/
+
 # 评分与调试残留
 .qemu.out
 .gdb.in

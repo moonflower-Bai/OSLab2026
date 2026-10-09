@@ -7,6 +7,8 @@ openspec/changes/<change-name>/prompt.md
 openspec/changes/archive/<date>-<change-name>/prompt.md
 ```
 
+没有对应 change 的直接处理（例如局部 bug 修复、文档或 LaTeX 编辑、用户明确要求快速修改）不保存 Prompt，不为保存 Prompt 创建 change 或会话档案。已有 change 时，范围内维护复用该 change，仅按下述规则保存直接影响它的需求或授权原文；不要为每次维护重新规划或请求批准。
+
 ## 收录规则
 
 只有同时满足以下条件的用户消息才可原文收录：
