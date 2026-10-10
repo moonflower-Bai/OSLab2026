@@ -2,6 +2,9 @@ name: Governance
 
 on:
   pull_request:
+    # Check every target; the governance script validates the permitted route.
+    # Retargeting an existing PR must also produce a fresh check.
+    types: [opened, synchronize, reopened, edited]
 
 permissions:
   contents: read
