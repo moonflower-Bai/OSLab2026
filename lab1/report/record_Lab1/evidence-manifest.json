@@ -1,0 +1,237 @@
+{
+  "format_version": 1,
+  "reviewed_on": "2026-10-10",
+  "source_directory_relative_to_repository": "../Lab1前置准备/record_Lab1",
+  "repository_base_commit": "11cc12824a147f946424cd24b346134d9313e813",
+  "images_count": 12,
+  "logs_count": 3,
+  "files": [
+    {
+      "source_name": "exercise1-1.png",
+      "path": "images/exercise1-1.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 58026,
+      "sha256": "7382a8ec829ac17f1b12284ce52c1d1f498844af7aafdabb56916af1d2266df5",
+      "width": 1187,
+      "height": 617
+    },
+    {
+      "source_name": "exercise1-2.png",
+      "path": "images/exercise1-2.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 67420,
+      "sha256": "068c77c91e07e258aca16867719f4a867609f1930aa07fe0fa81319e21cb71d0",
+      "width": 1200,
+      "height": 468
+    },
+    {
+      "source_name": "exercise1-3.png",
+      "path": "images/exercise1-3.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 119441,
+      "sha256": "1e00fff27b49262a35e6cdc4773d51d7a85b72b20f2186e71e05eabfecee1771",
+      "width": 1097,
+      "height": 1056
+    },
+    {
+      "source_name": "exercise1-4.png",
+      "path": "images/exercise1-4.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 18245,
+      "sha256": "3c3ceb4042f5a552483dcde599dba524928409285a9dd30d55358cb975833b49",
+      "width": 637,
+      "height": 241
+    },
+    {
+      "source_name": "exercise1-5.png",
+      "path": "images/exercise1-5.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 18950,
+      "sha256": "501baee68ca8eda087642deab001334bac06c6edf4945a3c0a841463009f938b",
+      "width": 667,
+      "height": 273
+    },
+    {
+      "source_name": "exercise1-6.png",
+      "path": "images/exercise1-6.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 199602,
+      "sha256": "73d94ea728434afdfbf7dabe45e1f48c85ce273f5219324193215f95b2f8abb1",
+      "width": 2016,
+      "height": 1226
+    },
+    {
+      "source_name": "exercise2-1.png",
+      "path": "images/exercise2-1.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 23280,
+      "sha256": "acee998fe9670fa6b4798d808433d561c2492c47d9cbccae4d84fbf9a888c8b1",
+      "width": 565,
+      "height": 356
+    },
+    {
+      "source_name": "exercise2-2.png",
+      "path": "images/exercise2-2.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 24479,
+      "sha256": "3ddc863807596233ce12d74a26a15be775666be1bd05b0c9c2e6bd6d6a4bb6cf",
+      "width": 886,
+      "height": 361
+    },
+    {
+      "source_name": "exercise2-3.png",
+      "path": "images/exercise2-3.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 12075,
+      "sha256": "3dfe32d62f243cf3d6df862786fb2a1de437f38e65dc865c0fb772965e2b9ae8",
+      "width": 471,
+      "height": 263
+    },
+    {
+      "source_name": "exercise2-4.png",
+      "path": "images/exercise2-4.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 54982,
+      "sha256": "38a829d800aff605342375d895b42d6316ac809b656f0fbb7be9a3de6d804711",
+      "width": 1163,
+      "height": 667
+    },
+    {
+      "source_name": "exercise2-5.png",
+      "path": "images/exercise2-5.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 44326,
+      "sha256": "f3005e1833f533bab5e4eaec2c5e042c83bd896146e3763c09fe396159ae2597",
+      "width": 857,
+      "height": 516
+    },
+    {
+      "source_name": "exercise2-6.png",
+      "path": "images/exercise2-6.png",
+      "purpose": "exercise-evidence",
+      "size_bytes": 48390,
+      "sha256": "d7285898d6680a5fa36c61adaaa380edbf28ae93dfb7460a1c006748141456a7",
+      "width": 855,
+      "height": 603
+    },
+    {
+      "source_name": "gdb.log",
+      "path": "logs/gdb.log",
+      "purpose": "exercise-1-success",
+      "size_bytes": 1022,
+      "sha256": "6d6f2798aff5a6113acc83c812b27366b2767529dae1cd5122cc47f3c083b324"
+    },
+    {
+      "source_name": "exercise2-reset-gdb.log",
+      "path": "logs/exercise2-reset-gdb.log",
+      "purpose": "exercise-2-success",
+      "size_bytes": 2551,
+      "sha256": "8fe39f63c9030ab3ae57cd183d2d88f682c10091d8ef5531ba125d74904c1389"
+    },
+    {
+      "source_name": "exercise2-gdb.log",
+      "path": "logs/diagnostics/exercise2-gdb.log",
+      "purpose": "incorrect-initial-state",
+      "size_bytes": 478,
+      "sha256": "508ec00b15e1d1970916f356234aeeddbffd6217dd8144bfed0086c38057c5ec"
+    }
+  ],
+  "source_comparison": {
+    "matched_files_count": 21,
+    "files": [
+      {
+        "path": "lab1/Makefile",
+        "sha256": "e91694656be423a2c1405633cf7e3db82ea0102121762c41d497e34f8e7af2c8"
+      },
+      {
+        "path": "lab1/kern/driver/console.c",
+        "sha256": "d7ca78720834a50fe79748ca151ef148d2ef2f643cb63d9f456f36f1d42ea499"
+      },
+      {
+        "path": "lab1/kern/driver/console.h",
+        "sha256": "964c039c962830691c15da313b6be9139a3fbca86512ade5fd5bae350bf5085b"
+      },
+      {
+        "path": "lab1/kern/init/entry.S",
+        "sha256": "e1707a0b6e83ae9e7d18d2d89841e393dd1d2f291349b8296c2e57e0c35c13cf"
+      },
+      {
+        "path": "lab1/kern/init/init.c",
+        "sha256": "7b712f772b9d7e40b8e64372072fa2bf8a9aa121717909282e642e6b936aa240"
+      },
+      {
+        "path": "lab1/kern/libs/stdio.c",
+        "sha256": "236ee222dddbefe23ff7067159391caebbf4bfce6763c799446fbe223eb82b0c"
+      },
+      {
+        "path": "lab1/kern/mm/memlayout.h",
+        "sha256": "bae388f919ba2e6ca85a96603ed1496207257a6f4384386b444323f91d1d5bd5"
+      },
+      {
+        "path": "lab1/kern/mm/mmu.h",
+        "sha256": "a4f27242694387bc3853149f23fade5f100e7af63920b620ef5a783f6bf409de"
+      },
+      {
+        "path": "lab1/libs/defs.h",
+        "sha256": "f3e2d5a5828612d90523f79d54f2ddd7033d5bb431b76d55acfcc76ccd73fe61"
+      },
+      {
+        "path": "lab1/libs/error.h",
+        "sha256": "5c04e0037eb524cc4e7efda0069aa52dcd37d09dc52ecbc02cec7437d69752a6"
+      },
+      {
+        "path": "lab1/libs/printfmt.c",
+        "sha256": "5e3aac79068637eb02bd36e7dc85187e3b07d8ecf1ed0313e2d03bcd2301f2cd"
+      },
+      {
+        "path": "lab1/libs/readline.c",
+        "sha256": "0b4969a96d11c4ad00a87317d59f4b22d61f400f15326b8a26ca02253f56eeeb"
+      },
+      {
+        "path": "lab1/libs/riscv.h",
+        "sha256": "d3d3acfb4bfca4267705dc03fe9eb9600743de446adfbee35f1a7ff79a81582d"
+      },
+      {
+        "path": "lab1/libs/sbi.c",
+        "sha256": "c53f66af3e197cbec0a2b5dc81bb9b1e6de4cd4a633e96f18cf8b820d84dfb0f"
+      },
+      {
+        "path": "lab1/libs/sbi.h",
+        "sha256": "090f49d2579566bc27092fa9217e20a8435afa8c586260a3e58a5515f86f999d"
+      },
+      {
+        "path": "lab1/libs/stdarg.h",
+        "sha256": "deee724be1034684e0e97026b674ebfb9b19be4d0a285da5626201bc16f20710"
+      },
+      {
+        "path": "lab1/libs/stdio.h",
+        "sha256": "3a96ebc0bce1a46824bac9be5f3f986a6f9d969c86f15bf16f26f5cade6fa989"
+      },
+      {
+        "path": "lab1/libs/string.c",
+        "sha256": "e09f5e8e02bd09723c9788a9b6d00e4aa363a2ae87b0ee1d9bf4659ae95b9954"
+      },
+      {
+        "path": "lab1/libs/string.h",
+        "sha256": "47557a62a2b2f29639f48373bdb521a2cfdb6c1d4beedad0e3e4792b824c8dd0"
+      },
+      {
+        "path": "lab1/tools/function.mk",
+        "sha256": "46fab30a764a277562f3bebb6ac9cf4e11d6e1718e9698d363b78dcefc8effc6"
+      },
+      {
+        "path": "lab1/tools/kernel.ld",
+        "sha256": "1620facf88a1dbd61454003b88abc30bb17cdc2dc496d27decf6574e062940b7"
+      }
+    ]
+  },
+  "observed_build": {
+    "elf_entry": "0x80200000",
+    "kernel_elf_sha256": "6dac28fabe509bc8caf005f523af16b60f02fc642989207ee4ca4bfd093ba2d8",
+    "kernel_raw_image_sha256": "f26dedd36b5571fd916e5931da8a086d3798498ed548a90d1e9aad61e5051a7a",
+    "qemu_version": "10.2.1",
+    "gdb_version": "17.1",
+    "gcc_version": "14.2.0",
+    "firmware_kind": "FW_JUMP"
+  }
+}
