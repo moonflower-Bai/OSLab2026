@@ -5,6 +5,11 @@ category: "Workflow"
 description: "Implement tasks from an OpenSpec change (Experimental)"
 ---
 
+<!-- repository-authorization:start -->
+**Repository authorization:** Read the root `AGENTS.md` before using this workflow. Its routing and scope authorization rules control the confirmation steps below: honor explicit implementation approval and quick/direct edit requests, reuse applicable authority, and ask only for unapproved requirement increments. If routing selects direct maintenance, perform that edit and validation without running the planning steps below. A proposal-only or discussion request remains planning-only. This workflow does not grant archive or commit authority.
+**Repository branches:** Follow the root AGENTS.md experiment dev/stable/release and non-experiment branch conventions, including their pull request targets. Do not substitute a tool-specific branch prefix or infer authority to create or push submission branches.
+<!-- repository-authorization:end -->
+
 Implement tasks from an OpenSpec change.
 
 **Store selection:** If the user names a store (a store is a standalone OpenSpec repo registered on this machine) or the work lives in one, run `openspec store list --json` to discover registered store ids, then pass `--store <id>` on the commands that read or write specs and changes (`new change`, `status`, `instructions`, `list`, `show`, `validate`, `archive`, `doctor`, `context`, `schemas`, `view`). Once selected, treat `--store <id>` as sticky for the rest of the workflow. Every unscoped example of those commands below is shorthand: before running it, append the flag. For example, run `openspec status --change "<name>" --json --store "<id>"`, not the unscoped form shown below. Other commands do not take the flag. Hints printed by commands already carry the flag; keep it on follow-ups. Without a store, commands act on the nearest local `openspec/` root.
@@ -106,12 +111,12 @@ In both branches, never create the root as a side effect: do not run `openspec i
    - Mark task complete in the tasks file: `- [ ]` → `- [x]`
    - Continue to next task
 
-   **Pause if:**
-   - Task is unclear → ask for clarification
-   - Implementation reveals a design issue → suggest updating artifacts
-   - A task needs work beyond what the spec and tasks describe, or you are tempted to drop, narrow, defer, or accept exceptions to specified behavior to make it fit → surface the added scope and ask; do not absorb it silently
-   - Error or blocker encountered → report and wait for guidance
-   - User interrupts
+   **Clarify or pause only when needed:**
+   - A material requirement is unclear and blocks progress → ask for that decision; resolve routine implementation details autonomously.
+   - A design issue changes an unapproved requirement → confirm the increment; otherwise update the existing artifacts and continue.
+   - A task requires an unapproved requirement or scope increment, or would weaken the agreed acceptance criteria → explain and confirm that increment; necessary local implementation details remain within the existing authority.
+   - A blocker requires user input → report it and request the missing input; repair in-scope errors and retry validation without new approval.
+   - The user explicitly stops the work or revokes authority → stop that scope; incorporate ordinary steering and continue authorized work.
 
 7. **On completion or pause, show status**
 
@@ -175,12 +180,12 @@ What would you like to do?
 **Guardrails**
 - Keep going through tasks until done or blocked
 - Always read context files before starting (from the apply instructions output)
-- If task is ambiguous, pause and ask before implementing
-- If implementation reveals issues, pause and suggest artifact updates
+- Ask only about material unresolved requirements; do not stop for routine implementation choices covered by existing authority.
+- Resolve in-scope implementation issues and keep artifacts coherent; confirm only unapproved requirement or scope changes.
 - Keep code changes minimal and scoped to each task
 - Update task checkbox immediately after completing each task
-- Pause on errors, blockers, or unclear requirements - don't guess
-- When a task needs work beyond what the spec describes, surface the added scope and pause - never silently narrow, defer, or simplify away specified behavior
+- Continue repairs and validation within the authorized scope; pause dependent work only for an unresolved user decision, missing authority, or an explicit stop.
+- Confirm only unapproved requirement or scope increments; never silently narrow, defer, or weaken agreed behavior to make implementation fit.
 - Only mark a task `- [x]` when its specified behavior is fully implemented, not when it is partially done or deferred
 - Use contextFiles from CLI output, don't assume specific file names
 - Do not use context or operation guidance as proof that a task is complete

@@ -10,9 +10,14 @@ metadata:
   generatedBy: "1.13.1"
 ---
 
+<!-- repository-authorization:start -->
+**Repository authorization:** Read the root `AGENTS.md` before using this workflow. Its routing and scope authorization rules control the confirmation steps below: honor explicit implementation approval and quick/direct edit requests, reuse applicable authority, and ask only for unapproved requirement increments. If routing selects direct maintenance, perform that edit and validation without running the planning steps below. A proposal-only or discussion request remains planning-only. This workflow does not grant archive or commit authority.
+**Repository branches:** Follow the root AGENTS.md experiment dev/stable/release and non-experiment branch conventions, including their pull request targets. Do not substitute a tool-specific branch prefix or infer authority to create or push submission branches.
+<!-- repository-authorization:end -->
+
 Propose a new change - create the change and generate all artifacts in one step.
 
-**Planning boundary**: This workflow creates planning artifacts only. The user request that selected or triggered this workflow authorizes planning only, even if it asks to build or fix something. Do not edit project code. After the planning artifacts are complete, stop. Do not start implementation in the same response, even if the initial request asks for it. Wait for a new user request after the artifacts are presented; then start the apply workflow.
+**Planning boundary**: A proposal-only request authorizes planning only. Apply the root AGENTS.md authorization rules first: when the user has explicitly approved implementation or requested a quick/direct edit of this scope, do not discard that authority or require a new message. Reuse an existing change when appropriate; finish any necessary records and continue with the authorized work. Without implementation authority, complete the planning artifacts and wait for approval.
 
 I'll create a change with the artifacts your schema defines. With the default spec-driven schema that is:
 - proposal.md (what & why)
@@ -22,7 +27,7 @@ I'll create a change with the artifacts your schema defines. With the default sp
 
 `<capability-path>` is the spec directory relative to `specs/` (for example, `user-auth` or `identity/user-auth`). Preserve an existing capability's full path and follow the project's established organization for new capabilities.
 
-When the user is ready to implement, they must start the apply workflow explicitly.
+Implementation needs applicable authority, not a mandatory second invocation; reuse an explicit approval already present in the request.
 
 ---
 
@@ -152,7 +157,7 @@ After completing all artifacts, summarize:
 - Change name and location
 - List of artifacts created with brief descriptions, plus any conditional artifact you skipped and why
 - What's ready: "All artifacts needed for implementation are ready."
-- Prompt: "The artifacts are ready for review. When you are ready, run `/openspec-apply-change` or ask me to apply this change."
+- Next step: continue implementation when already authorized; otherwise present the artifacts and request only the missing implementation approval.
 
 **Artifact Creation Guidelines**
 
@@ -166,7 +171,7 @@ After completing all artifacts, summarize:
   - These guide what you write, but should never appear in the output
 
 **Guardrails**
-- The request that invoked this workflow authorizes planning only. Any implementation or apply instruction in that request does not carry forward. Do NOT implement the change, start the apply workflow, or edit project code during this workflow. After presenting the artifacts, stop and wait for a new user request to start the apply workflow
+- Preserve a proposal-only request's planning boundary. Do not erase explicit implementation approval or a quick/direct edit request; follow AGENTS.md and continue authorized work without a redundant approval round.
 - Create every artifact the apply phase transitively depends on, not just the ids listed in `apply.requires`
 - Always read dependency artifacts before creating a new one - re-read from disk, not from conversation memory (files may have changed since you last saw them)
 - Ask about ambiguities that would materially change scope, externally observable behavior, compatibility, or acceptance criteria; for minor details, make reasonable assumptions and record them

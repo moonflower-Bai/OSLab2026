@@ -38,15 +38,22 @@
   - 只修改 `lab-status.json` 指定的当前章节；冻结章节不可修改
   - 单章命令和工具链要求写在该章的 `AGENTS.md`
 - 开发分支
-  - 所有开发工作都在 `Dev/*` 分支上进行，例如 `Dev/fix-boot` 或 `Dev/lab1-notes`
-  - 变更通过 Pull Request 合入 `main`；不要直接向 `main` 推送提交
+  - 实验按 `dev → stable → release` 流转，`LabX` 对应章节编号，`UserName` 是开发者标识
+  - dev：`Dev/LabX/UserName/branch`，例如 `Dev/Lab1/UserName/fix-boot`，PR 目标为对应 stable
+  - stable：`Dev/LabX/main`，例如 `Dev/Lab1/main`，PR 目标为对应 release
+  - release：根级 `LabX`，例如 `Lab1`，用于最终实验提交；不直接开发或默认跳过 stable
+  - 非实验代码、文档或治理维护使用普通 `Dev/*`，例如 `Dev/docs`，PR 目标仍为根级 `main`
+  - 实验分支的章节须与 `lab-status.json.current` 对应；实验目录内纯 Markdown、LaTeX、图片等修改也可使用普通 `Dev/*`，混合代码修改按实验要求检查
   - 可导入的 GitHub `main` 保护规则见 [main-requires-pull-request.json](.github/rulesets/main-requires-pull-request.json)
 - OpenSpec
-  - 修改仓库前先创建 change；提案、实现、归档和提交分别授权
+  - 明确批准实施或要求快速、直接修改时，直接完成指定范围；局部 bug 修复、文档和 LaTeX 编辑默认直接处理，不强制创建 change
+  - 尚未获准直接实施的新实验功能、规格行为变化、较大重构和治理策略调整先创建 change；只对尚未批准的新需求或实质范围扩展请求确认
+  - 一次实施授权覆盖范围内的实现、修复、验证重试和规划同步，不逐任务或逐轮暂停；归档和提交需明确授权，可在同一条指令中一起给出
   - 根规则见 [AGENTS.md](AGENTS.md)，OpenSpec 配置见 [openspec/config.yaml](openspec/config.yaml)
-  - 本地与 GitHub Actions 共用 `scripts/check_governance.py` 检查规格、范围、规则和 Prompt 门禁
+  - 本地与 GitHub Actions 共用 `scripts/check_governance.py` 检查分支、规格、范围、规则和 Prompt 门禁；PR CI 显式传入 head/base，避免使用 detached HEAD 名称
 - 用户 Prompt
   - 只保存直接影响 change 且不含敏感值的用户原文
+  - 没有 change 的直接维护不保存 Prompt，也不为保存 Prompt 创建 change
   - 证据放在对应 change 的 `prompt.md`，不提交按会话生成的归档
   - 细节见 [prompts/README.md](prompts/README.md)
 
@@ -101,10 +108,19 @@ nix profile install github:Fission-AI/OpenSpec
 openspec --version
 ```
 
-在项目根目录运行 `openspec init`，并在交互界面选择正在使用的 AI 编程工具。也可用工具 ID 非交互配置，例如 `openspec init --tools codex,claude`；可用 ID 以 `openspec init --help` 为准。初始化或新增工具后，重启或重新加载 IDE/Agent。已有 OpenSpec 项目更新生成的工具指令时，在该项目根目录运行 `openspec update`。本仓库已包含 OpenSpec 配置，可直接使用其已有 change 和规格。
+在项目根目录运行 `openspec init`，并在交互界面选择正在使用的 AI 编程工具。也可用工具 ID 非交互配置，例如 `openspec init --tools codex,claude`；可用 ID 以 `openspec init --help` 为准。本仓库已包含 OpenSpec 配置，可直接使用其已有 change 和规格。
+
+仓库对 Codex、Claude、Cursor、OpenCode 和 Hermes 的 OpenSpec 技能及命令提示词做了本地适配，统一遵从根规则的分支规范、分流和持续授权逻辑。新增工具或执行 `openspec update` 后，在重新加载 IDE/Agent 前恢复并检查本地适配：
+
+```sh
+python3 -B scripts/sync_ai_workflows.py --write
+python3 -B scripts/sync_ai_workflows.py --check
+```
+
+同步脚本保留各平台的命令语法，治理门禁会检测提示词缺失或审批规则回退。CLI 更新导致未知模板时，先按提示审阅适配规则，再重新加载工具。
 
 ### 导入 main 分支保护规则
 
 具有仓库管理员权限或 `edit repository rules` 权限的人员可将上述 JSON 导入 GitHub：打开仓库 **Settings → Rules → Rulesets**，选择 **New ruleset → Import a ruleset**，选中 JSON 文件，检查内容后点击 **Create**。导入后确认 ruleset 处于 Active 状态且目标是 `main`。详细步骤见 [GitHub 导入 ruleset 文档](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/managing-rulesets-for-a-repository#importing-a-ruleset)。
 
-该 ruleset 阻止对 `main` 的直接更新并要求通过 Pull Request；`Dev/*` 是仓库开发约定，ruleset 本身只匹配 `main`。
+该 ruleset 阻止对 `main` 的直接更新并要求通过 Pull Request，本身只匹配 `main`。实验 dev/stable/release 的命名及 PR 目标由本地和 CI 检查；这不代表远程 `Dev/LabX/main` 或 `LabX` 已部署保护规则。
