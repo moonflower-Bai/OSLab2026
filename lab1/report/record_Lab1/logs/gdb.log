@@ -1,0 +1,30 @@
+Hardware assisted breakpoint 1 at 0x80200000: file kern/init/entry.S, line 7.
+Continuing.
+
+Breakpoint 1, kern_entry () at kern/init/entry.S:7
+7	    la sp, bootstacktop
+pc             0x80200000	0x80200000 <kern_entry>
+sp             0x80045e30	0x80045e30
+ra             0x80005b52	0x80005b52
+=> 0x80200000 <kern_entry>:	auipc	sp,0x3
+   0x80200004 <kern_entry+4>:	mv	sp,sp
+   0x80200008 <kern_entry+8>:	j	0x8020000a <kern_init>
+$1 = 0x80203000
+9	    tail kern_init
+pc             0x80200008	0x80200008 <kern_entry+8>
+sp             0x80203000	0x80203000 <SBI_CONSOLE_PUTCHAR>
+ra             0x80005b52	0x80005b52
+$2 = 1
+=> 0x80200008 <kern_entry+8>:	j	0x8020000a <kern_init>
+kern_init () at kern/init/init.c:8
+8	    memset(edata, 0, end - edata);
+pc             0x8020000a	0x8020000a <kern_init>
+sp             0x80203000	0x80203000 <SBI_CONSOLE_PUTCHAR>
+ra             0x80005b52	0x80005b52
+$3 = 0x8020000a
+$4 = 1
+Continuing.
+
+Program received signal SIGINT, Interrupt.
+kern_init () at kern/init/init.c:12
+12	   while (1)

@@ -1,0 +1,11 @@
+pc             0x8020003a	0x8020003a <kern_init+48>
+sp             0x80202ff0	0x80202ff0
+=> 0x8020003a <kern_init+48>:	j	0x8020003a <kern_init+48>
+   0x8020003c <cputch>:	addi	sp,sp,-16
+   0x8020003e <cputch+2>:	sd	s0,0(sp)
+   0x80200040 <cputch+4>:	sd	ra,8(sp)
+   0x80200042 <cputch+6>:	mv	s0,a1
+   0x80200044 <cputch+8>:	jal	0x8020008a <cons_putc>
+0x1018:	0x0000000080000000	0x0000000087e00000
+0x1028:	0x000000004942534f	0x0000000000000002
+0x80200000 <kern_entry>:	0x00003117
