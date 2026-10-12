@@ -51,7 +51,7 @@ exercise2-4.png 中完整的 mstatus 解码在行末存在显示截断，但原�
 
 ## 3. 练习 1：理解入口操作
 
-相关源码是 [entry.S](../../kern/init/entry.S)、[mmu.h](../../kern/mm/mmu.h)、[memlayout.h](../../kern/mm/memlayout.h)和 [init.c](../../kern/init/init.c)；[链接脚本](../../tools/kernel.ld)指定入口 kern_entry 和内核基址 0x80200000。
+相关源码是 [entry.S](../../../lab1/kern/init/entry.S)、[mmu.h](../../../lab1/kern/mm/mmu.h)、[memlayout.h](../../../lab1/kern/mm/memlayout.h)和 [init.c](../../../lab1/kern/init/init.c)；[链接脚本](../../../lab1/tools/kernel.ld)指定入口 kern_entry 和内核基址 0x80200000。
 
 ### 3.1 启动栈的定义
 
@@ -318,7 +318,7 @@ from pathlib import Path
 from hashlib import sha256
 import json
 
-root = Path("lab1/report/record_Lab1")
+root = Path("doc/lab1/record_Lab1")
 manifest = json.loads((root / "evidence-manifest.json").read_text())
 for item in manifest["files"]:
     data = (root / item["path"]).read_bytes()
