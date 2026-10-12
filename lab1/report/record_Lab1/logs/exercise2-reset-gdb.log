@@ -1,0 +1,65 @@
+pc             0x1000	0x1000
+sp             0x0	0x0
+=> 0x1000:	auipc	t0,0x0
+   0x1004:	addi	a2,t0,40
+   0x1008:	csrr	a0,mhartid
+   0x100c:	ld	a1,32(t0)
+   0x1010:	ld	t0,24(t0)
+   0x1014:	jr	t0
+0x1018:	0x0000000080000000	0x0000000087e00000
+0x1028:	0x000000004942534f	0x0000000000000002
+0x80200000 <kern_entry>:	0x00003117
+Hardware watchpoint 1: -location *(unsigned int *)0x80200000
+Num     Type           Disp Enb Address            What
+1       hw watchpoint  keep y                      -location *(unsigned int *)0x80200000
+0x0000000000001014 in ?? ()
+pc             0x1014	0x1014
+t0             0x80000000	2147483648
+a0             0x0	0
+a1             0x87e00000	2279604224
+a2             0x1028	4136
+=> 0x1014:	jr	t0
+0x0000000080000000 in ?? ()
+pc             0x80000000	0x80000000
+=> 0x80000000:	add	s0,a0,zero
+   0x80000004:	add	s1,a1,zero
+   0x80000008:	add	s2,a2,zero
+   0x8000000c:	jal	0x80000678
+   0x80000010:	add	a6,a0,zero
+   0x80000014:	add	a0,s0,zero
+   0x80005b7a:	mret
+Hardware assisted breakpoint 2 at 0x80005b7a
+Note: breakpoint 1 also set at pc 0x80200000.
+Hardware assisted breakpoint 3 at 0x80200000: file kern/init/entry.S, line 7.
+No checkpoints.
+Num     Type           Disp Enb Address            What
+1       hw watchpoint  keep y                      -location *(unsigned int *)0x80200000
+2       hw breakpoint  keep y   0x0000000080005b7a 
+	stop only if $mepc == 0x80200000
+3       hw breakpoint  keep y   0x0000000080200000 kern/init/entry.S:7
+Continuing.
+
+Breakpoint 2, 0x0000000080005b7a in ?? ()
+pc             0x80005b7a	0x80005b7a
+mepc           0x80200000	2149580800
+mstatus        0x8000000a00006800	SD:1 VM:00 MXR:0 PUM:0 MPRV:0 XS:0 FS:3 MPP:1 HPP:0 SPP:0 MPIE:0 HPIE:0 SPIE:0 UPIE:0 MIE:0 HIE:0 SIE:0 UIE:0
+sp             0x80045e30	0x80045e30
+=> 0x80005b7a:	mret
+$1 = 0x1
+
+Breakpoint 3, kern_entry () at kern/init/entry.S:7
+7	    la sp, bootstacktop
+pc             0x80200000	0x80200000 <kern_entry>
+sp             0x80045e30	0x80045e30
+ra             0x80005b52	0x80005b52
+=> 0x80200000 <kern_entry>:	auipc	sp,0x3
+   0x80200004 <kern_entry+4>:	mv	sp,sp
+   0x80200008 <kern_entry+8>:	j	0x8020000a <kern_init>
+0x80200000 <kern_entry>:	0x00003117
+Num     Type           Disp Enb Address            What
+1       hw watchpoint  keep y                      -location *(unsigned int *)0x80200000
+2       hw breakpoint  keep y   0x0000000080005b7a 
+	stop only if $mepc == 0x80200000
+	breakpoint already hit 1 time
+3       hw breakpoint  keep y   0x0000000080200000 kern/init/entry.S:7
+	breakpoint already hit 1 time

@@ -26,6 +26,7 @@
 
 - 已放入仓库
   - `lab1/`：最小内核骨架，当前练习是阅读启动流程；构建与运行要求见 [lab1/AGENTS.md](lab1/AGENTS.md)
+  - [Lab1 练习 1 与 2 的截图说明和实验记录](lab1/report/record_Lab1/README.md)：原始截图、GDB 日志、逐图核对结果和报告整理依据
   - `0_environment_setup.md`、`3_startdash.md`：环境说明
 - 尚未放入
   - `lab2/` 至 `lab9/`
