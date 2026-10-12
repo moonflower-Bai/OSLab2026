@@ -327,9 +327,11 @@ def main() -> int:
 
     current = status.get("current") if isinstance(status, dict) else None
     frozen = status.get("frozen") if isinstance(status, dict) else None
-    if isinstance(current, str) and not (ROOT / current).is_dir():
+    # 仓库治理分支不携带章节内容；有章节目录的实验分支仍检查完整性。
+    has_chapters = any(path.is_dir() and re.fullmatch(r"lab\d+", path.name) for path in ROOT.iterdir())
+    if has_chapters and isinstance(current, str) and not (ROOT / current).is_dir():
         errors.append(f"当前章节目录不存在：{current}")
-    if isinstance(frozen, list):
+    if has_chapters and isinstance(frozen, list):
         for chapter in frozen:
             if isinstance(chapter, str) and not (ROOT / chapter).is_dir():
                 errors.append(f"冻结章节目录不存在：{chapter}")
