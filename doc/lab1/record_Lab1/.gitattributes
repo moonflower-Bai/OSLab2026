@@ -1,2 +1,0 @@
-# 保留 GDB 原始输出的行尾空格；其他文件沿用仓库的空白检查规则。
-logs/**/*.log whitespace=-blank-at-eol
