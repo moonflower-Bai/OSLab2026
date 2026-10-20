@@ -33,6 +33,11 @@
 本实验分支以 `Dev/Lab2/main` 的 Lab2 基线为起点；Lab1 提交保留在 `Lab1` 分支。
 
 当前个人提交分支为 `Dev/Lab2/hews/page-init`。Best Fit 算法和独立回归由组员负责，完整参考版本保留在本地 `Dev/Lab2/hews/setup` 并另行打包，不随此分支推送。
+  - `lab1/`：最小内核骨架；构建与运行要求见 [lab1/AGENTS.md](lab1/AGENTS.md)
+  - `lab2/`：物理内存和页表，当前待完成物理内存初始化与分配等实验任务
+  - `0_environment_setup.md`、`3_startdash.md`：环境说明
+- 尚未放入
+  - `lab3/` 至 `lab9/`
 
 ## 开发规范
 
