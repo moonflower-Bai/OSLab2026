@@ -61,7 +61,45 @@ size_t nr_free_pages(void) {
     return pmm_manager->nr_free_pages();
 }
 
-//lab2 function1 YOUR CODE
+static void page_init(void) {
+    extern char end[];
+    uintptr_t mem_base = get_memory_base();
+    uintptr_t mem_size = get_memory_size();
+
+    va_pa_offset = PHYSICAL_MEMORY_OFFSET;
+    // The bootstrap leaf maps the 1 GiB beginning at DRAM_BASE.
+    assert(mem_base == DRAM_BASE);
+    assert(mem_size > 0 && mem_size <= (1UL << SV39_VPN2SHIFT));
+    uintptr_t mem_end = mem_base + mem_size;
+    npage = PPN(mem_end);
+    assert(npage > nbase);
+
+    size_t page_count = npage - nbase;
+    pages = (struct Page *)ROUNDUP((uintptr_t)end, PGSIZE);
+    uintptr_t pages_pa = PADDR(pages);
+    assert(pages_pa >= mem_base && pages_pa < mem_end);
+    assert(page_count <= (mem_end - pages_pa) / sizeof(struct Page));
+
+    uintptr_t free_begin = ROUNDUP(pages_pa + page_count * sizeof(struct Page), PGSIZE);
+    uintptr_t free_end = ROUNDDOWN(mem_end, PGSIZE);
+    assert(free_begin < free_end);
+
+    // Start with everything reserved, including firmware, kernel and metadata.
+    for (size_t i = 0; i < page_count; i++) {
+        struct Page *page = &pages[i];
+        page->flags = 0;
+        SetPageReserved(page);
+        page->property = 0;
+        set_page_ref(page, 0);
+        list_init(&page->page_link);
+    }
+    init_memmap(pa2page(free_begin), (free_end - free_begin) / PGSIZE);
+
+    cprintf("physical memory: [0x%016lx, 0x%016lx)\n", mem_base, mem_end);
+    cprintf("page descriptors: %lu, npage: 0x%lx\n", page_count, npage);
+    cprintf("free physical memory: [0x%016lx, 0x%016lx), %lu pages\n",
+            free_begin, free_end, nr_free_pages());
+}
 
 /* pmm_init - initialize the physical memory management */
 void pmm_init(void) {

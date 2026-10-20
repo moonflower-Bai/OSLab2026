@@ -29,9 +29,9 @@ bc --version
 
 ## 3. Implement and verify physical memory initialization
 
-- [ ] 3.1 补齐 Best Fit 编译单元所需的共享空闲区声明与宏，再实现 `page_init()`，暂时保留 First Fit；`make -C lab2` 须退出码为零并产生 RISC-V 内核 ELF。
-- [ ] 3.2 核对 DTB 内存范围、偏移、`npage` 与 `npage - nbase` 的含义、页描述符对齐和保留区；限时运行 QEMU 须出现合理内存信息及 First Fit 的 `check_alloc_page() succeeded!`，日志无 panic。
-- [ ] 3.3 在报告中补写初始化模块的布局、计算依据、实际提示词迭代及该阶段验证结果；检查描述与代码、日志相符，不提前写 Best Fit 或最终评分通过。
+- [x] 3.1 补齐 Best Fit 编译单元所需的共享空闲区声明与宏，实现 `page_init()` 并修复必要的 Sv39 启动取指映射，暂时保留 First Fit；`make -C lab2` 须退出码为零并产生 RISC-V 内核 ELF。
+- [x] 3.2 核对 DTB 内存范围、偏移、`npage` 与 `npage - nbase` 的含义、页描述符对齐和保留区；限时运行 QEMU 须出现合理内存信息及 First Fit 的 `check_alloc_page() succeeded!`，日志无 panic。
+- [x] 3.3 在报告中补写初始化模块的布局、计算依据、实际提示词迭代及该阶段验证结果；检查描述与代码、日志相符，不提前写 Best Fit 或最终评分通过。
 
 本阶段验证命令：
 
