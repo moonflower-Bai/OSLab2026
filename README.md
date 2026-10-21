@@ -50,7 +50,7 @@
   - 实验分支的章节须与 `lab-status.json.current` 对应；实验目录内纯 Markdown、LaTeX、图片等修改也可使用普通 `Dev/*`，混合代码修改按实验要求检查
   - 可导入的 GitHub `main` 保护规则见 [main-requires-pull-request.json](.github/rulesets/main-requires-pull-request.json)
 - OpenSpec
-  - 是否需要 change 由影响决定，是否暂停由授权决定：新实验功能、规格行为变化、较大重构和治理策略调整需要 change，拿不准时也创建；局部 bug 修复、文档和 LaTeX 编辑直接处理
+  - 适用范围按 [AGENTS.md](AGENTS.md) 的状态机判断：只有封闭白名单内的修改（恢复既定行为的局部 bug 修复、文档和 LaTeX 编辑、不改变行为的局部整理）直接处理，其余一律先建 change，拿不准时也建；用户限定写入范围不限制 change 目录
   - 明确批准实施或要求快速、直接修改时不再暂停：需要 change 的先完成产物并通过 `openspec validate --strict`，再在同一轮实施；只对尚未批准的新需求或实质范围扩展请求确认
   - 一次实施授权覆盖范围内的实现、修复、验证重试和规划同步，不逐任务或逐轮暂停；归档和提交需明确授权，可在同一条指令中一起给出
   - 根规则见 [AGENTS.md](AGENTS.md)，OpenSpec 配置见 [openspec/config.yaml](openspec/config.yaml)
