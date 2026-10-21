@@ -4,7 +4,7 @@
 
 ### Requirement: Route before invoking a workflow
 
-AI MUST 在修改任何文件之前分别作出两项判断：是否需要 change 记录，以及是否需要暂停等待批准。是否需要 change MUST 只由需求影响决定：新增实验能力、改变规格契约或验收标准、跨模块重构、调整治理策略 MUST 有对应 change；范围明确、恢复既定行为的局部修复，以及不改变代码或治理契约的文档、LaTeX 内容或排版修改 MUST 默认直接处理而不创建 change。是否暂停 MUST 只由授权决定，授权 MUST NOT 改变是否需要 change 的结论。无法确定任务是否属于直接处理时，AI MUST 创建 change。行数、文件扩展名和文件数量 MUST NOT 单独决定分流；混合请求 MUST 按其中需要 change 的部分处理相关实现。
+AI MUST 按状态机判断 OpenSpec 适用范围：每个请求从 TRIAGE 开始，不修改文件的请求结束于 ANSWER；修改全部落在直接处理白名单内时进入 DIRECT；其他任何修改进入 RECORD，先完成 change 记录再经 GATE 决定是否暂停。直接处理白名单 MUST 是封闭列表，只包含：恢复既定行为且不新增或改变任何可观察行为的局部 bug 修复；不改变治理规则含义的纯文档和 LaTeX 内容或排版修改；不改变行为、接口和验收标准的局部整理。白名单之外的修改，包括新增或修改测试与验收脚本、构建和工具调整，MUST 进入 RECORD；无法确定是否在白名单内时 MUST 进入 RECORD。授权 MUST 只影响 GATE 的转移，MUST NOT 改变 TRIAGE 的分类。行数、文件扩展名、文件数量和所在目录 MUST NOT 单独决定分类；混合请求中不在白名单内的部分 MUST 进入 RECORD。
 
 #### Scenario: A two-line bug restores expected behavior
 - **WHEN** 用户要求修复局部错误，修复恢复已有预期且不改变规格契约
@@ -25,6 +25,10 @@ AI MUST 在修改任何文件之前分别作出两项判断：是否需要 chang
 #### Scenario: The route is uncertain
 - **WHEN** AI 无法确定一项实验代码修改是恢复既定行为还是引入新行为
 - **THEN** AI 创建 change 记录该修改
+
+#### Scenario: A black-box test suite is requested
+- **WHEN** 用户要求在 `test/` 下新增单元测试，且不修改原有代码
+- **THEN** AI 进入 RECORD，因为新增测试改变验收标准，不在直接处理白名单内
 
 ### Requirement: Preserve staged authorization for substantial changes
 
@@ -85,3 +89,17 @@ AI MUST 在修改任何文件之前分别作出两项判断：是否需要 chang
 #### Scenario: OpenSpec update restores generated prompts
 - **WHEN** OpenSpec 更新把提示词恢复为默认版本
 - **THEN** 提示词检查发现回退，仓库同步入口能恢复适用的授权条款
+
+## ADDED Requirements
+
+### Requirement: Keep change records writable under write limits
+
+用户限定的写入范围 MUST 解释为对项目与实现文件的限制；当前 change 目录 `openspec/changes/<name>/` 属于工作流元数据，AI MUST 能在其中写入产物和 Prompt 证据。只有用户明确要求本次不创建 change 时，AI MAY 从 RECORD 改走 DIRECT，并 MUST 在报告中说明未留记录。
+
+#### Scenario: Writes are limited to a test directory
+- **WHEN** 用户要求只能在 `test/` 内写入，并要求新增测试套件
+- **THEN** AI 在 `openspec/changes/<name>/` 写入 change 记录，并只在 `test/` 内写入测试文件
+
+#### Scenario: The user declines a change
+- **WHEN** 用户明确说明本次不要创建 change
+- **THEN** AI 不创建 change，并在报告中说明本次修改没有 OpenSpec 记录
