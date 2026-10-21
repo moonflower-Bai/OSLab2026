@@ -50,8 +50,8 @@
   - 实验分支的章节须与 `lab-status.json.current` 对应；实验目录内纯 Markdown、LaTeX、图片等修改也可使用普通 `Dev/*`，混合代码修改按实验要求检查
   - 可导入的 GitHub `main` 保护规则见 [main-requires-pull-request.json](.github/rulesets/main-requires-pull-request.json)
 - OpenSpec
-  - 明确批准实施或要求快速、直接修改时，直接完成指定范围；局部 bug 修复、文档和 LaTeX 编辑默认直接处理，不强制创建 change
-  - 尚未获准直接实施的新实验功能、规格行为变化、较大重构和治理策略调整先创建 change；只对尚未批准的新需求或实质范围扩展请求确认
+  - 是否需要 change 由影响决定，是否暂停由授权决定：新实验功能、规格行为变化、较大重构和治理策略调整需要 change，拿不准时也创建；局部 bug 修复、文档和 LaTeX 编辑直接处理
+  - 明确批准实施或要求快速、直接修改时不再暂停：需要 change 的先完成产物并通过 `openspec validate --strict`，再在同一轮实施；只对尚未批准的新需求或实质范围扩展请求确认
   - 一次实施授权覆盖范围内的实现、修复、验证重试和规划同步，不逐任务或逐轮暂停；归档和提交需明确授权，可在同一条指令中一起给出
   - 根规则见 [AGENTS.md](AGENTS.md)，OpenSpec 配置见 [openspec/config.yaml](openspec/config.yaml)
   - 本地与 GitHub Actions 共用 `scripts/check_governance.py` 检查分支、规格、范围、规则和 Prompt 门禁；PR CI 显式传入 head/base，避免使用 detached HEAD 名称
@@ -114,7 +114,7 @@ openspec --version
 
 在项目根目录运行 `openspec init`，并在交互界面选择正在使用的 AI 编程工具。也可用工具 ID 非交互配置，例如 `openspec init --tools codex,claude`；可用 ID 以 `openspec init --help` 为准。本仓库已包含 OpenSpec 配置，可直接使用其已有 change 和规格。
 
-仓库对 Codex、Claude、Cursor、OpenCode 和 Hermes 的 OpenSpec 技能及命令提示词做了本地适配，统一遵从根规则的分支规范、分流和持续授权逻辑。新增工具或执行 `openspec update` 后，在重新加载 IDE/Agent 前恢复并检查本地适配：
+团队使用 Claude Code、Codex、DeepSeek harness 和 Hermes，规则入口为 `AGENTS.md` 与仅导入它的 `CLAUDE.md`。仓库对 `.claude`、`.agents`、`.hermes` 下的 OpenSpec 技能及 Claude 命令提示词做了本地适配，统一遵从根规则的分支规范、分流和持续授权逻辑；Cursor 和 OpenCode 的旧适配文件不再维护。新增工具或执行 `openspec update` 后，在重新加载 IDE/Agent 前恢复并检查本地适配：
 
 ```sh
 python3 -B scripts/sync_ai_workflows.py --write

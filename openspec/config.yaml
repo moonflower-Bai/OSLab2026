@@ -11,9 +11,11 @@ context: |
   Experiment pull requests flow dev to stable to release. Ordinary non-experiment maintenance uses Dev/* with main as its pull request target; pure document/LaTeX edits do not require a developer hierarchy.
   Branch conventions do not authorize branch creation, commits, archives, or pushes. Reuse the user's explicit scope authority for those operations.
   OpenSpec artifacts, change-level prompt evidence, governance rules, CI, and repository documentation are workflow metadata and may be changed within the authorized request.
-  Follow AGENTS.md routing before selecting a workflow: explicit implementation approval or a quick/direct edit request authorizes direct execution of that scope without another apply message or mandatory planning artifacts.
+  Follow AGENTS.md routing before editing: whether a change is needed depends only on impact; whether to pause depends only on authority.
+  New experiment features, behavior or acceptance changes, cross-module refactors, and governance policy changes need a change; when the route is uncertain, create a change.
   Routine fixes restoring existing behavior and document/LaTeX edits use direct maintenance without creating a change.
-  Substantial new requirements without direct implementation authority use OpenSpec planning and wait for implementation approval only when that authority is still missing.
+  Explicit approval or a quick/direct edit request removes the pause, not the record: create or reuse the change, finish its artifacts and prompt evidence, pass openspec validate <change> --strict, then implement in the same turn without another apply message.
+  Without implementation authority, finish the planning artifacts and wait for approval.
   Implementation authority persists across tasks and turns; complete in-scope fixes, validation retries, local design adjustments, and artifact/document updates without repeated approval.
   Confirm only unapproved requirement or scope increments; a user's explicit direct implementation request already authorizes the named increment.
   Archiving and committing require explicit authority, which may be granted together with implementation in one message; never request an applicable approval again.
