@@ -18,6 +18,13 @@
 - [x] 4.1 运行 `openspec validate decouple-records-from-approval --strict`、`openspec validate --all --strict`、`git diff --check`；审阅 diff 只含计划内治理文件与本 change，不含章节代码。
 - [x] 4.2 在 `Dev/*` 分支提交，推送并用 `gh` 创建以 `main` 为目标的 PR，CI 通过后合并。
 
+## 5. 状态机重述（追加）
+
+- [x] 5.1 将 `AGENTS.md` OpenSpec 节改写为状态机（TRIAGE、ANSWER、DIRECT、RECORD、GATE、WAIT、APPLY、DONE、STOPPED）、封闭的直接处理白名单和跨状态约束（写入范围、章节范围、Archive/Commit）；对照 spec 中“黑盒测试”“写入范围”场景人工审阅。
+- [x] 5.2 同步 `openspec/config.yaml`、`README.md` 与 `sync_ai_workflows.py` 的 `POLICY_BLOCK`；运行 `--write`、`--check`，第二次 `--write` 无差异。
+- [x] 5.3 更新 `check_governance.py` 必需术语（状态机、白名单、写入范围）与自检；运行 `python3 -B scripts/check_governance.py --self-test` 通过，`openspec validate --all --strict` 通过。
+- [x] 5.4 另一会话结束占用工作树后，把改动迁移到 `Dev/openspec-record-first`；迁移与提交需用户另行授权提交时执行。
+
 外部前提：OpenSpec CLI、Python 3、Git、已登录的 `gh`。不归档本 change。
 
 验证记录（2026-10-21）：`sync_ai_workflows.py --write` 修改 24 / 24 份，第二次 0 份，`--check` 通过 24 份，`.cursor`、`.opencode` 无改动。`check_governance.py --self-test` 通过（含“授权跳过 change”回退样例）。`openspec validate decouple-records-from-approval --strict` 通过（INFO：归档前需先归档 `simplify-change-routing`），`openspec validate --all --strict` 7 项通过，`git diff --check` 通过。未修改章节代码。

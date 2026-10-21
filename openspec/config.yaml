@@ -11,9 +11,9 @@ context: |
   Experiment pull requests flow dev to stable to release. Ordinary non-experiment maintenance uses Dev/* with main as its pull request target; pure document/LaTeX edits do not require a developer hierarchy.
   Branch conventions do not authorize branch creation, commits, archives, or pushes. Reuse the user's explicit scope authority for those operations.
   OpenSpec artifacts, change-level prompt evidence, governance rules, CI, and repository documentation are workflow metadata and may be changed within the authorized request.
-  Follow AGENTS.md routing before editing: whether a change is needed depends only on impact; whether to pause depends only on authority.
-  New experiment features, behavior or acceptance changes, cross-module refactors, and governance policy changes need a change; when the route is uncertain, create a change.
-  Routine fixes restoring existing behavior and document/LaTeX edits use direct maintenance without creating a change.
+  Follow the AGENTS.md state machine: TRIAGE -> ANSWER | DIRECT | RECORD; RECORD -> GATE -> WAIT | APPLY -> DONE. Authority affects only the GATE transition, never TRIAGE.
+  DIRECT is a closed whitelist: local fixes restoring existing behavior, pure document/LaTeX edits, and local cleanups that change no behavior, interface, or acceptance criteria. Everything else, including new or changed tests and acceptance scripts, goes to RECORD; when uncertain, go to RECORD.
+  A user's write-scope limit constrains project files only; the current change directory is workflow metadata and stays writable unless the user explicitly declines a change.
   Explicit approval or a quick/direct edit request removes the pause, not the record: create or reuse the change, finish its artifacts and prompt evidence, pass openspec validate <change> --strict, then implement in the same turn without another apply message.
   Without implementation authority, finish the planning artifacts and wait for approval.
   Implementation authority persists across tasks and turns; complete in-scope fixes, validation retries, local design adjustments, and artifact/document updates without repeated approval.
