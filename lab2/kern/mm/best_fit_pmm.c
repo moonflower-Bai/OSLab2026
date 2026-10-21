@@ -119,6 +119,73 @@ static size_t
 best_fit_nr_free_pages(void) {
     return nr_free;
 }
+// Keep the free list ordered by address, so a newly released block only needs
+// a check against its immediate neighbours to restore maximal free blocks.
+static void
+best_fit_insert_block(struct Page *base, size_t n) {
+    base->property = n;
+    SetPageProperty(base);
+    nr_free += n;
+
+    // Find the first block that starts after base, and insert before it.
+    list_entry_t *next = list_next(&free_list);
+    while (next != &free_list && le2page(next, page_link) < base) {
+        next = list_next(next);
+    }
+    list_add_before(next, &base->page_link);
+
+    // Merge with the previous block if it ends exactly where base begins.
+    list_entry_t *prev = list_prev(&base->page_link);
+    if (prev != &free_list) {
+        struct Page *page = le2page(prev, page_link);
+        if (page + page->property == base) {
+            page->property += base->property;
+            ClearPageProperty(base);
+            base->property = 0;
+            list_del(&base->page_link);
+            base = page;
+        }
+    }
+
+    // Merge with the following block if it begins where the merged block ends.
+    next = list_next(&base->page_link);
+    if (next != &free_list) {
+        struct Page *page = le2page(next, page_link);
+        if (base + base->property == page) {
+            base->property += page->property;
+            ClearPageProperty(page);
+            page->property = 0;
+            list_del(&page->page_link);
+        }
+    }
+}
+
+static void
+best_fit_init_memmap(struct Page *base, size_t n) {
+    assert(n > 0);
+    for (struct Page *page = base; page != base + n; page++) {
+        assert(PageReserved(page));
+        page->flags = 0;
+        page->property = 0;
+        set_page_ref(page, 0);
+    }
+    best_fit_insert_block(base, n);
+}
+
+static void
+best_fit_free_pages(struct Page *base, size_t n) {
+    assert(n > 0);
+    for (struct Page *page = base; page != base + n; page++) {
+        assert(!PageReserved(page) && !PageProperty(page));
+        page->flags = 0;
+        page->property = 0;
+        set_page_ref(page, 0);
+    }
+    best_fit_insert_block(base, n);
+}
+
+//lab2 function2-2 YOUR CODE (best_fit_init / best_fit_alloc_pages /
+//best_fit_nr_free_pages / best_fit_pmm_manager are implemented by the teammate)
 
 // Framework tests: students must not modify basic_check or best_fit_check.
 static void
