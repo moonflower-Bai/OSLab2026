@@ -43,6 +43,7 @@
   - dev：`Dev/LabX/UserName/branch`，例如 `Dev/Lab1/UserName/fix-boot`，PR 目标为对应 stable
   - stable：`Dev/LabX/main`，例如 `Dev/Lab1/main`，PR 目标为对应 release
   - release：根级 `LabX`，例如 `Lab1`，用于最终实验提交；不直接开发或默认跳过 stable
+  - OS 实验作业的 PR 在 dev → stable、stable → release 两个阶段均选择 **Rebase and merge（变基合并）**，保留独立 commit，不使用 squash；变基后 commit 哈希可能变化，详见 [AGENTS.md](AGENTS.md)
   - 非实验代码、文档或治理维护使用普通 `Dev/*`，例如 `Dev/docs`，PR 目标仍为根级 `main`
   - 实验分支的章节须与 `lab-status.json.current` 对应；实验目录内纯 Markdown、LaTeX、图片等修改也可使用普通 `Dev/*`，混合代码修改按实验要求检查
   - 可导入的 GitHub `main` 保护规则见 [main-requires-pull-request.json](.github/rulesets/main-requires-pull-request.json)
