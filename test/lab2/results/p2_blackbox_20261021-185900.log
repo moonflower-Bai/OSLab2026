@@ -1,0 +1,6 @@
+# Lab2 P2 Best-Fit black-box run 20261021-185900
+# branch: Dev/Lab2/baijingren/best-fit commit: 5a948f5
+## all cases, one boot
+kern/mm/pmm.c:78:5: error: implicit declaration of function 'page_init'; did you mean 'pmm_init'? [-Wimplicit-function-declaration]
+BUILD-FAILED
+RESULT: BUILD FAILED
