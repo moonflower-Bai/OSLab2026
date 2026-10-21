@@ -125,6 +125,7 @@ def rule_violations(
     for term in (
         "Propose", "Apply", "Archive", "Commit", "lab-status.json",
         "明确实施授权优先", "快速修改", "直接处理", "完整 OpenSpec", "持续授权",
+        "先留记录", "严格校验",
         "Dev/LabX/UserName/branch", "Dev/LabX/main", "release",
     ):
         if term not in agents:
@@ -151,6 +152,7 @@ def rule_violations(
             "Before implementation, create an OpenSpec change and obtain explicit apply authorization.",
             "Confirm every edit with the user before writing",
             "每次修改都必须重新批准",
+            "没有 change 时，不强制先创建 proposal、delta spec、design、tasks 才能修改",
         ):
             if obsolete in text:
                 errors.append(f"{path}: 恢复了已废止的全量规划或重复审批要求")
@@ -329,7 +331,7 @@ def self_test() -> List[str]:
         bool(status_violations({"current": "lab1", "frozen": ["lab1"]})),
     )
     branch_terms = "Dev/LabX/UserName/branch Dev/LabX/main release"
-    valid_agents = "Propose Apply Archive Commit lab-status.json 明确实施授权优先 快速修改 直接处理 完整 OpenSpec 持续授权 " + branch_terms
+    valid_agents = "Propose Apply Archive Commit lab-status.json 明确实施授权优先 快速修改 直接处理 完整 OpenSpec 持续授权 先留记录 严格校验 " + branch_terms
     valid_cursor = "AGENTS.md /opsx- 快速 持续 已有授权不重复 根级 `LabX` " + branch_terms
     valid_config = "AGENTS.md quick/direct edit authority persists without repeated approval root-level LabX " + branch_terms
     valid_readme = "快速 文档和 LaTeX 不逐任务或逐轮 sync_ai_workflows.py 根级 `LabX` " + branch_terms
@@ -338,6 +340,7 @@ def self_test() -> List[str]:
     for index, obsolete, label in (
         (0, ".agents/skills/x", "私有 skill 路径被拒绝"),
         (0, "每次修改都必须重新批准", "逐次审批回退被拒绝"),
+        (0, "没有 change 时，不强制先创建 proposal、delta spec、design、tasks 才能修改", "授权跳过 change 回退被拒绝"),
         (2, "Confirm every edit with the user before writing", "平台提示词审批回退被拒绝"),
         (3, "Before implementation, create an OpenSpec change and obtain explicit apply authorization.", "配置全量规划回退被拒绝"),
         (4, "修改仓库前先创建 change", "README 全量规划回退被拒绝"),

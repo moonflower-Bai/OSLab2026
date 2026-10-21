@@ -7,7 +7,7 @@ tags: ["workflow", "explore", "experimental", "thinking"]
 ---
 
 <!-- repository-authorization:start -->
-**Repository authorization:** Read the root `AGENTS.md` before using this workflow. Its routing and scope authorization rules control the confirmation steps below: honor explicit implementation approval and quick/direct edit requests, reuse applicable authority, and ask only for unapproved requirement increments. If routing selects direct maintenance, perform that edit and validation without running the planning steps below. A proposal-only or discussion request remains planning-only. This workflow does not grant archive or commit authority.
+**Repository authorization:** Read the root `AGENTS.md` before using this workflow. Whether a change is needed depends on impact; whether to pause depends on authority. Explicit implementation approval or a quick/direct edit request removes the pause, not the record: for work that needs a change, finish its artifacts and pass `openspec validate <change> --strict`, then implement in the same turn. Reuse applicable authority and ask only for unapproved requirement increments. If routing selects direct maintenance, perform that edit and validation without running the planning steps below. A proposal-only or discussion request remains planning-only. This workflow does not grant archive or commit authority.
 **Repository branches:** Follow the root AGENTS.md experiment dev/stable/release and non-experiment branch conventions, including their pull request targets. Do not substitute a tool-specific branch prefix or infer authority to create or push submission branches.
 <!-- repository-authorization:end -->
 
