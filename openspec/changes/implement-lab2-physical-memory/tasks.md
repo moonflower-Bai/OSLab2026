@@ -1,5 +1,7 @@
 # Tasks
 
+2026-10-21 分工调整：当前分支只交付 hews 的启动与页初始化。Best Fit 与最终集成任务由组员后续完成，保持未勾选；完整参考代码另外打包。
+
 ## 1. Confirm scope and execution prerequisites
 
 - [x] 1.1 核对指导书 `lab2_2_1_exercise.html`、`lab2_5_labs_requirement.html` 与本地提交说明；在设计记录中列出已确认必做项、选做项和无法取得的正文，未知内容不计作已覆盖，新增实质要求另行确认。
@@ -62,7 +64,7 @@ timeout 15s make -C lab2 test
 ## 5. Run integration validation and capture evidence
 
 - [ ] 5.1 执行原始 `make grade` 并保存完整输出；两项测试均 PASS、总分 `20/20`、命令成功且日志无 panic 才标记评分通过，检查并清理本次遗留进程。
-- [ ] 5.2 使用 64 MiB 内存执行一次启动验证；核对 DTB 报告、页号上界和自检结果，证明初始化不依赖默认 128 MiB；结果及实际运行命令写入报告。
+- [x] 5.2 使用 64 MiB 内存执行一次启动验证；2026-10-21 在个人分支以已有 First Fit 复验，DTB 范围、16384 条描述符和 15705 个空闲页正确，自检通过；日志见 `hews-qemu-64m.log`。Best Fit 的集成验证仍待组员完成。
 - [ ] 5.3 对照原始骨架检查框架函数及 `tools/grade.sh`、`tools/inject.py`、`tools/test_lab2.c` 未被修改；运行本 change 的严格校验与仓库治理检查，记录失败原因并修复范围内问题。
 - [ ] 5.4 从实际终端运行取得启动、自检和评分截图，保存到 `lab2/report/images/` 并补齐报告的集成验证部分；逐一检查图片相对链接及截图和日志的对应关系。
 
@@ -74,7 +76,7 @@ make -C lab2 clean
 make -C lab2
 timeout 15s make -C lab2 qemu QEMU='qemu-system-riscv64 -m 64M'
 openspec validate implement-lab2-physical-memory --strict
-python3 -B scripts/check_governance.py --branch Dev/Lab2/hews/setup --target Dev/Lab2/main --self-test
+python3 -B scripts/check_governance.py --branch Dev/Lab2/hews/page-init --target Dev/Lab2/main --self-test
 git diff --check
 ```
 

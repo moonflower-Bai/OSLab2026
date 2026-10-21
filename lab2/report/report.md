@@ -1,5 +1,7 @@
 # Lab2：物理内存和页表实验报告
 
+本文件是 hews 的启动映射与物理页初始化阶段报告；Best Fit 和最终集成由其他组员后续补充。详细讲解见 [代码 review](review.md)，分工见 [三人分工](division.md)。
+
 ## 实验基本信息
 
 | 项目 | 内容 |
@@ -7,12 +9,13 @@
 | 实验名称 | Lab2：物理内存和页表 |
 | 小组成员 | 待小组填写 |
 | 完成日期 | 待最终验收 |
-| 开发基线 | `Dev/Lab2/main`，`d52989b` |
-| 开发分支 | `Dev/Lab2/hews/setup` |
+| 原始源码基线 | `Dev/Lab2/main`，`d52989b` |
+| 当前变基起点 | `Dev/Lab2/main`，`e83e10e`；实验源码与原基线一致 |
+| 开发分支 | `Dev/Lab2/hews/page-init` |
 
 ### 小组分工
 
-练习负责人和报告分工待小组确认，不以开发分支标识代替成员姓名或学号。
+hews 负责启动映射、物理页初始化与相关环境；baijingren 负责 Best Fit 选块和拆分；第三位成员负责释放合并及测试。完整模块与报告安排见 [分工文档](division.md)，姓名、学号及实际贡献待小组按事实填写。
 
 ## 一、实验目的
 
@@ -53,7 +56,7 @@ QEMU、GDB、OpenSpec 复用仓库外的 Lab1 前置准备工具。QEMU 包装�
 
 ### 物理内存初始化
 
-涉及函数为 `kern/mm/pmm.c` 中的 `static void page_init(void)`，负责人待小组确认。
+涉及函数为 `kern/mm/pmm.c` 中的 `static void page_init(void)`，本阶段由 hews 负责；启动所需修复位于 `kern/init/entry.S`。
 
 初始化先设置 `va_pa_offset = PHYSICAL_MEMORY_OFFSET`，读取 DTB 的内存起点和大小。当前页号转换以 `DRAM_BASE` 为基点，初始映射覆盖从该地址开始的 1 GiB，因此对起点和范围作断言，防止把不可映射的页纳入管理。
 
@@ -83,7 +86,7 @@ QEMU、GDB、OpenSpec 复用仓库外的 Lab1 前置准备工具。QEMU 包装�
 
 ### Best Fit 连续物理页分配
 
-待实现并记录实际验证结果。
+由 baijingren 和第三位成员按函数分工完成，参考代码另行打包。本分支不包含 Best Fit 算法或主机位图回归；`best_fit_pmm.c` 只补充了原框架编译所需的共享空闲区声明，当前管理器仍为 First Fit。
 
 ### 实际提示词与迭代
 
@@ -91,7 +94,7 @@ QEMU、GDB、OpenSpec 复用仓库外的 Lab1 前置准备工具。QEMU 包装�
 
 ## 五、测试与验证
 
-当前完成工具版本检查、原始骨架基线构建和物理内存初始化阶段验证；First Fit 自检已通过。Best Fit 和最终评分待后续阶段验证。
+当前完成工具版本检查、原始骨架基线构建和物理内存初始化阶段验证；First Fit 自检已通过。分工拆分后的默认及非默认内存复验记录见 [个人阶段交接](submission.md)。Best Fit 和最终评分待组员集成后验证。
 
 ## 六、实验总结与收获
 

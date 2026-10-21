@@ -12,11 +12,14 @@
 
 ## 验证
 
+当前 `Dev/Lab2/hews/page-init` 只交付启动映射和物理页初始化，启用骨架已有的 First Fit。现阶段验证为构建、默认 128 MiB 和 64 MiB 启动以及 First Fit 自检；下列 Best Fit 内部评分、最终评分与截图要求在组员集成后执行，不提前记为本分支通过。
+
 从仓库根目录执行：
 
 ```bash
 make -C lab2
 timeout 15s make -C lab2 qemu
+timeout 15s make -C lab2 qemu QEMU='qemu-system-riscv64 -m 64M'
 make -C lab2 clean
 timeout 15s make -C lab2 test
 timeout 60s make -C lab2 grade
@@ -26,7 +29,7 @@ timeout 60s make -C lab2 grade
 - QEMU 内核会空转；外部超时 124 只表示限时结束。成功依据是 DTB 解析成功、`check_alloc_page() succeeded!` 及无 panic。
 - `make test` 前必须清理，因为 Makefile 不跟踪编译宏的变化；最终预期 `grading: 6 / 6 points`。
 - `make grade` 在临时副本注入评分测试。预期两项 PASS、`Total Score: 20/20` 和成功退出；保留输出后再清理本次启动的 QEMU，不能终止其他会话进程。
-- 本机如需开环回调试端口，使用工具许可的网络权限；调试后清理本次进程。
+- 本机 GDB 使用 `127.0.0.1` 环回端口，按运行环境的权限要求连接；调试后清理本次进程。
 
 ## 实现与证据
 

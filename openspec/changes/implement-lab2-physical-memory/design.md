@@ -1,8 +1,14 @@
 # Design
 
+## 2026-10-21 分工交接调整
+
+小组整体设计保留，个人提交拆为 `Dev/Lab2/hews/page-init`，复用基线准备和页初始化两个阶段提交。当前只启用已有 First Fit，不引入 Best Fit 算法或独立主机回归；后两者由组员完成。完整参考分支 `Dev/Lab2/hews/setup` 保留在本地，另行导出 ZIP。以下初始计划中的完整实现、验证和最终交付是小组后续目标，不能记为当前个人分支已完成。
+
+推送前读取远端发现 `Dev/Lab2/main` 已从 `d52989b` 更新到 `e83e10e`，只涉及章节元数据和已有缓存文件，实验源码一致。个人分支变基到该起点，README 冲突按实际目录解决，阶段代码保持逐文件一致。
+
 ## Context
 
-动机与范围见 `proposal.md`。当前分支为 `Dev/Lab2/hews/setup`，已按用户指令快进至 `origin/Dev/Lab2/main` 的 `d52989b`；基线已导入 Lab2，`lab-status.json.current` 尚需从 `lab1` 切换。
+动机与范围见 `proposal.md`。初始实施分支为 `Dev/Lab2/hews/setup`，基线为 `origin/Dev/Lab2/main` 的 `d52989b`；以下是初始设计背景，个人提交范围按顶部的分工调整执行。
 
 骨架的 `pmm.c` 缺少 `page_init()`，且仍选择 First Fit；`best_fit_pmm.c` 缺少管理器实现，只保留框架检查。提供的评分脚本检查初始化和 Best Fit 各 10 分，但分配算法的实际行为主要由启动时的 `best_fit_check()` 保证。最终验收需要同时检查自检和评分，不能仅凭管理器指针或输出字符串判定正确。
 
@@ -86,7 +92,7 @@ Best Fit 复用框架的双向链表和块首描述方式，空闲块按物理�
 
 最终课程交付需要根级 `code/`、`report/` 和 `report/prompt.md`。当前提示词门禁禁止后一个路径，章节目录整理也需检查范围门禁。因此最终整理是已识别的后续工作，需单独形成具体调整方案；本次不生成被禁止的受版本管理提示词副本，不声称发布已准备完毕。
 
-后续路线为 `Dev/Lab2/hews/setup → Dev/Lab2/main → Lab2`。集成分支创建、发布分支创建、commit、推送、归档及合并按届时已有授权执行；创建目标分支前重新检查远端，避免覆盖他人的集成工作。
+个人提交路线为 `Dev/Lab2/hews/page-init → Dev/Lab2/main → Lab2`。用户已授权个人 commit 与推送，两阶段合并均使用 Rebase and merge；远端合并、发布分支创建与归档尚未授权。完整参考分支保留在本地。
 
 ## Risks / Trade-offs
 

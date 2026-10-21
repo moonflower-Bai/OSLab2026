@@ -25,12 +25,14 @@
 `lab-status.json` 是章节状态的唯一事实来源。当前章节为 `lab2`，冻结章节为空。
 
 - 已放入仓库
-  - `lab2/`：物理内存管理实验骨架；构建与验证要求见 [lab2/AGENTS.md](lab2/AGENTS.md)
+  - `lab2/`：hews 的启动映射与物理页初始化，使用已有 First Fit 验证；[分工](lab2/report/division.md)、[代码 review](lab2/report/review.md)、[阶段报告](lab2/report/report.md)、[构建与验证要求](lab2/AGENTS.md)
   - `0_environment_setup.md`、`3_startdash.md`：环境说明
 - 尚未放入
   - `lab3/` 至 `lab9/`
 
 本实验分支以 `Dev/Lab2/main` 的 Lab2 基线为起点；Lab1 提交保留在 `Lab1` 分支。
+
+当前个人提交分支为 `Dev/Lab2/hews/page-init`。Best Fit 算法和独立回归由组员负责，完整参考版本保留在本地 `Dev/Lab2/hews/setup` 并另行打包，不随此分支推送。
 
 ## 开发规范
 
