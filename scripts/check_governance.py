@@ -125,7 +125,7 @@ def rule_violations(
     for term in (
         "Propose", "Apply", "Archive", "Commit", "lab-status.json",
         "明确实施授权优先", "快速修改", "直接处理", "完整 OpenSpec", "持续授权",
-        "先留记录", "严格校验",
+        "先留记录", "严格校验", "TRIAGE", "白名单", "写入范围",
         "Dev/LabX/UserName/branch", "Dev/LabX/main", "release",
     ):
         if term not in agents:
@@ -331,7 +331,7 @@ def self_test() -> List[str]:
         bool(status_violations({"current": "lab1", "frozen": ["lab1"]})),
     )
     branch_terms = "Dev/LabX/UserName/branch Dev/LabX/main release"
-    valid_agents = "Propose Apply Archive Commit lab-status.json 明确实施授权优先 快速修改 直接处理 完整 OpenSpec 持续授权 先留记录 严格校验 " + branch_terms
+    valid_agents = "Propose Apply Archive Commit lab-status.json 明确实施授权优先 快速修改 直接处理 完整 OpenSpec 持续授权 先留记录 严格校验 TRIAGE 白名单 写入范围 " + branch_terms
     valid_cursor = "AGENTS.md /opsx- 快速 持续 已有授权不重复 根级 `LabX` " + branch_terms
     valid_config = "AGENTS.md quick/direct edit authority persists without repeated approval root-level LabX " + branch_terms
     valid_readme = "快速 文档和 LaTeX 不逐任务或逐轮 sync_ai_workflows.py 根级 `LabX` " + branch_terms
