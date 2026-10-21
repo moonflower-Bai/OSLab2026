@@ -7,13 +7,13 @@ tags: ["workflow", "artifacts", "experimental"]
 ---
 
 <!-- repository-authorization:start -->
-**Repository authorization:** Read the root `AGENTS.md` before using this workflow. Its routing and scope authorization rules control the confirmation steps below: honor explicit implementation approval and quick/direct edit requests, reuse applicable authority, and ask only for unapproved requirement increments. If routing selects direct maintenance, perform that edit and validation without running the planning steps below. A proposal-only or discussion request remains planning-only. This workflow does not grant archive or commit authority.
+**Repository authorization:** Read the root `AGENTS.md` before using this workflow. Whether a change is needed depends on impact; whether to pause depends on authority. Explicit implementation approval or a quick/direct edit request removes the pause, not the record: for work that needs a change, finish its artifacts and pass `openspec validate <change> --strict`, then implement in the same turn. Reuse applicable authority and ask only for unapproved requirement increments. If routing selects direct maintenance, perform that edit and validation without running the planning steps below. A proposal-only or discussion request remains planning-only. This workflow does not grant archive or commit authority.
 **Repository branches:** Follow the root AGENTS.md experiment dev/stable/release and non-experiment branch conventions, including their pull request targets. Do not substitute a tool-specific branch prefix or infer authority to create or push submission branches.
 <!-- repository-authorization:end -->
 
 Propose a new change - create the change and generate all artifacts in one step.
 
-**Planning boundary**: A proposal-only request authorizes planning only. Apply the root AGENTS.md authorization rules first: when the user has explicitly approved implementation or requested a quick/direct edit of this scope, do not discard that authority or require a new message. Reuse an existing change when appropriate; finish any necessary records and continue with the authorized work. Without implementation authority, complete the planning artifacts and wait for approval.
+**Planning boundary**: A proposal-only request authorizes planning only. Apply the root AGENTS.md authorization rules first: when the user has explicitly approved implementation or requested a quick/direct edit of this scope, do not discard that authority or require a new message. Reuse an existing change when appropriate; finish every required artifact, run `openspec validate <change> --strict` and fix any issue, then continue with the authorized implementation. Without implementation authority, complete the planning artifacts and wait for approval.
 
 I'll create a change with the artifacts your schema defines. With the default spec-driven schema that is:
 - proposal.md (what & why)
@@ -167,7 +167,7 @@ After completing all artifacts, summarize:
   - These guide what you write, but should never appear in the output
 
 **Guardrails**
-- Preserve a proposal-only request's planning boundary. Do not erase explicit implementation approval or a quick/direct edit request; follow AGENTS.md and continue authorized work without a redundant approval round.
+- Preserve a proposal-only request's planning boundary. Do not erase explicit implementation approval or a quick/direct edit request; follow AGENTS.md, pass strict validation, and continue authorized work without a redundant approval round.
 - Create every artifact the apply phase transitively depends on, not just the ids listed in `apply.requires`
 - Always read dependency artifacts before creating a new one - re-read from disk, not from conversation memory (files may have changed since you last saw them)
 - Ask about ambiguities that would materially change scope, externally observable behavior, compatibility, or acceptance criteria; for minor details, make reasonable assumptions and record them
