@@ -1,0 +1,5 @@
+make: Entering directory '/mnt/c/Users/hews/Desktop/University/Semester5/OS/OSLab2026/lab2'
++ cc kern/init/entry.S
++ ld bin/kernel
+riscv64-unknown-elf-objcopy bin/kernel --strip-all -O binary bin/ucore.img
+make: Leaving directory '/mnt/c/Users/hews/Desktop/University/Semester5/OS/OSLab2026/lab2'
