@@ -16,34 +16,6 @@ best_fit_init(void) {
     nr_free = 0;
 }
 
-// insert a free block into free_list, keeping the list sorted by address
-static void
-best_fit_insert_block(struct Page *base) {
-    list_entry_t *le = &free_list;
-    while ((le = list_next(le)) != &free_list) {
-        struct Page *page = le2page(le, page_link);
-        if (base < page) {
-            break;
-        }
-    }
-    list_add_before(le, &(base->page_link));
-}
-
-static void
-best_fit_init_memmap(struct Page *base, size_t n) {
-    assert(n > 0);
-    struct Page *p = base;
-    for (; p != base + n; p ++) {
-        assert(PageReserved(p));
-        p->flags = p->property = 0;
-        set_page_ref(p, 0);
-    }
-    base->property = n;
-    SetPageProperty(base);
-    nr_free += n;
-    best_fit_insert_block(base);
-}
-
 static struct Page *
 best_fit_alloc_pages(size_t n) {
     assert(n > 0);
@@ -75,44 +47,6 @@ best_fit_alloc_pages(size_t n) {
         ClearPageProperty(page);
     }
     return page;
-}
-
-static void
-best_fit_free_pages(struct Page *base, size_t n) {
-    assert(n > 0);
-    struct Page *p = base;
-    for (; p != base + n; p ++) {
-        assert(!PageReserved(p) && !PageProperty(p));
-        p->flags = 0;
-        set_page_ref(p, 0);
-    }
-    base->property = n;
-    SetPageProperty(base);
-    nr_free += n;
-    best_fit_insert_block(base);
-
-    // merge with the preceding block
-    list_entry_t *le = list_prev(&(base->page_link));
-    if (le != &free_list) {
-        p = le2page(le, page_link);
-        if (p + p->property == base) {
-            p->property += base->property;
-            ClearPageProperty(base);
-            list_del(&(base->page_link));
-            base = p;
-        }
-    }
-
-    // merge with the following block
-    le = list_next(&(base->page_link));
-    if (le != &free_list) {
-        p = le2page(le, page_link);
-        if (base + base->property == p) {
-            base->property += p->property;
-            ClearPageProperty(p);
-            list_del(&(p->page_link));
-        }
-    }
 }
 
 static size_t
