@@ -1,0 +1,8 @@
+# Host regression: lab2/tools/test_buddy_host.c + lab2/kern/mm/buddy_pmm.c
+# gcc -std=gnu99 -O1 -g -Wall -Wno-unused -fno-builtin \
+#   -fsanitize=address,undefined -fno-omit-frame-pointer \
+#   -I lab2/libs -I lab2/kern/mm -I lab2/kern/debug \
+#   lab2/tools/test_buddy_host.c lab2/kern/mm/buddy_pmm.c -o /tmp/test_buddy_host
+# ASAN_OPTIONS=detect_leaks=0 /tmp/test_buddy_host
+Buddy host test: PASS (2000 operations, seed 0x4c414232)
+exit=0
