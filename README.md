@@ -32,7 +32,9 @@
 
 本实验分支以 `Dev/Lab2/main` 的 Lab2 基线为起点；Lab1 提交保留在 `Lab1` 分支。
 
-当前个人提交分支为 `Dev/Lab2/hews/page-init`。Best Fit 算法和独立回归由组员负责，完整参考版本保留在本地 `Dev/Lab2/hews/setup` 并另行打包，不随此分支推送。
+此前个人初始化提交分支为 `Dev/Lab2/hews/page-init`。Best Fit 算法和独立回归由组员负责，完整参考版本保留在本地 `Dev/Lab2/hews/setup` 并另行打包，不随个人分支推送。
+
+2026-10-22 从最新 `Dev/Lab2/main` 创建 `Dev/Lab2/hews/slub`，实现 SLUB Challenge；底层仍用 First Fit。两份实现／测试提示词、对象层设计、128/64 MiB 启动与主机回归结果见 [SLUB 扩展报告](lab2/report/slub.md)。扩展同时修复了回归发现的 First Fit 尾插问题，原框架自检保持不变。
 
 ## 开发规范
 

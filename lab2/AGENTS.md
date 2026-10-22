@@ -12,7 +12,7 @@
 
 ## 验证
 
-当前 `Dev/Lab2/hews/page-init` 只交付启动映射和物理页初始化，启用骨架已有的 First Fit。现阶段验证为构建、默认 128 MiB 和 64 MiB 启动以及 First Fit 自检；下列 Best Fit 内部评分、最终评分与截图要求在组员集成后执行，不提前记为本分支通过。
+`Dev/Lab2/hews/page-init` 阶段只交付启动映射和物理页初始化，启用 First Fit。`Dev/Lab2/hews/slub` 在其已集成版本上新增对象分配层，仍使用 First Fit。下列 Best Fit 内部评分、最终评分与截图要求在组员集成后执行，不提前记为 SLUB 分支通过。
 
 从仓库根目录执行：
 
@@ -28,6 +28,8 @@ timeout 60s make -C lab2 grade
 - `make` 必须退出为 0 并产生 `lab2/bin/kernel` 和 `lab2/bin/ucore.img`。
 - QEMU 内核会空转；外部超时 124 只表示限时结束。成功依据是 DTB 解析成功、`check_alloc_page() succeeded!` 及无 panic。
 - `make test` 前必须清理，因为 Makefile 不跟踪编译宏的变化；最终预期 `grading: 6 / 6 points`。
+- 上述 `6 / 6` 是接入 Best Fit 后的预期；当前 First Fit 不输出该计分。SLUB 分支的正常构建、`qemu` 和 `test` 必须同时出现 `check_alloc_page() succeeded!`、`slub_check() succeeded!`，并且对象测试结束的空闲页数恢复至起点。
+- SLUB 主机验证执行 `make -C lab2 slub-host-test`，必须退出 0，出现 `Host SLUB ASan/UBSan: PASS`；入口直接编译真实对象层与页分配器，包含定向尾插回归、混合申请和隔离的预期 panic 检查。
 - `make grade` 在临时副本注入评分测试。预期两项 PASS、`Total Score: 20/20` 和成功退出；保留输出后再清理本次启动的 QEMU，不能终止其他会话进程。
 - 本机 GDB 使用 `127.0.0.1` 环回端口，按运行环境的权限要求连接；调试后清理本次进程。
 
