@@ -40,6 +40,7 @@ int kern_init(void) {
     // grade_backtrace();
     pmm_init();  // init physical memory management
     slub_init();
+    slub_check();
 
     /* do nothing */
     while (1)
