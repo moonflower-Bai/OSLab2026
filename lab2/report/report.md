@@ -86,7 +86,7 @@ QEMU、GDB、OpenSpec 复用仓库外的 Lab1 前置准备工具。QEMU 包装�
 
 ### Best Fit 连续物理页分配
 
-由 baijingren 和第三位成员按函数分工完成，参考代码另行打包。本分支不包含 Best Fit 算法或主机位图回归；`best_fit_pmm.c` 只补充了原框架编译所需的共享空闲区声明，当前管理器仍为 First Fit。
+由 baijingren 和第三位成员按函数分工完成，参考代码另行打包。合并后的分支已在 `pmm.c` 中将 `pmm_manager` 切换为 `&best_fit_pmm_manager`，选块/拆分与释放合并分别由两位成员实现；算法细节和场景分析由对应成员补充。
 
 ### 实际提示词与迭代
 
@@ -94,7 +94,26 @@ QEMU、GDB、OpenSpec 复用仓库外的 Lab1 前置准备工具。QEMU 包装�
 
 ## 五、测试与验证
 
-当前完成工具版本检查、原始骨架基线构建和物理内存初始化阶段验证；First Fit 自检已通过。分工拆分后的默认及非默认内存复验记录见 [个人阶段交接](submission.md)。Best Fit 和最终评分待组员集成后验证。
+完整的测试内容、方法和结果见 [测试报告](test-report.md)。以下为摘要。
+
+Best Fit 与释放合并集成后，第三位成员在合并分支上完成以下复现（2026-10-22）。证据日志见下表。
+
+| 项目 | 命令 | 结果 | 证据 |
+| --- | --- | --- | --- |
+| 构建 | `make -C lab2 clean && make -C lab2` | 退出码 0 | [构建日志](logs/best-fit-build.log) |
+| 128 MiB 启动 | `qemu-system-riscv64 ... -kernel lab2/bin/ucore.img` | `best_fit_pmm_manager`；31929 个空闲页；`check_alloc_page() succeeded!` | [启动日志](logs/best-fit-qemu.log) |
+| 64 MiB 启动 | 同上，加 `-m 64M` | 16384 个描述符；15705 个空闲页；自检通过 | [64 MiB 日志](logs/best-fit-qemu-64m.log) |
+| 原始评分 | `make -C lab2 grade` | 20/20（page init OK、best fit OK） | [评分日志](logs/best-fit-grade.log) |
+| P2 黑盒 | `sh test/lab2/run_p2.sh` | 30/30 PASS，含 D3 合并组合与 D5 三个种子各 1500 次随机操作 | [P2 日志](../../test/lab2/results/p2_blackbox_20261022-000744.log) |
+| 主机位图回归 | 参考包 `test_best_fit_host.c` 编译当前 `best_fit_pmm.c`，ASan/UBSan | 10,000 次操作 PASS | [主机日志](logs/best-fit-host.log) |
+
+补充说明：
+
+- 本节复现使用本机 QEMU 7.0.0（自编译，OpenSBI v1.0，fw_dynamic）；128 MiB 下 DTB 地址为 `0x87000000`。与第二节 hews 阶段所用包装层的版本和 DTB 地址不同，因此单独记录。
+- 仓库的 `make qemu` / `make grade` 仍使用 `-device loader`；本机 QEMU 7.0.0 的 fw_dynamic 不填 `next_addr`，所以启动验证用 `-kernel`，评分用本地 PATH 包装层把 loader 参数转成 `-kernel`。仓库命令没有因此修改，本机 QEMU 环境待修复。
+- 合并后曾出现两份释放合并实现，导致 `best_fit_insert_block`、`best_fit_init_memmap`、`best_fit_free_pages` 重复定义；保留第三位成员的版本后构建通过。上述测试基于包含该未提交修复的工作区，日志记录的 HEAD 为 `034d803`。
+- P2 套件在 `page_init()` 合入后不再需要 `P2_PAGE_INIT_FROM`，直接运行即 30/30 通过。覆盖范围包括 D1 链表不变量巡检、D2 选块/并列/切分、D3 前并/后并/双侧并/不并、D4 标志与引用计数清理、D5 随机模型、D6 失败分配无副作用。
+- 主机位图回归的脚本来自参考包，仅在 `/tmp` 作为临时脚手架编译运行，没有复制进仓库；P2 的 D5 已覆盖同类随机模型，避免重复维护两份等价测试。
 
 ## 六、实验总结与收获
 

@@ -1,0 +1,45 @@
+# Lab2 P2 Best-Fit black-box run 20261022-000744
+# branch: Dev/Lab2/cyx/free-merge commit: 034d803
+## all cases, one boot
+[P2] black-box suite start (P2_CASE=0, 30 cases)
+[P2] isolated: baseline=31924 chunks=1 arena=+845..+909
+[P2] PASS D0 manager is best_fit_pmm_manager
+[P2]   checker caught +4: B5: two address-adjacent free blocks are not merged
+[P2]   checker caught +1: B2/B4: PG_property set inside a free block
+[P2]   checker caught +0: B3: sum of block property != nr_free_pages()
+[P2]   checker caught +5: B3: sum of block property != nr_free_pages()
+[P2]   checker caught +2: B2: free page is still PageReserved
+[P2] PASS D1 invariant checker detects corrupted states
+[P2] PASS D2 AT-P2-01 best fit is not first fit
+[P2] PASS D2 AT-P2-02 tie between equal smallest blocks
+[P2] PASS D2 smallest fit at list head
+[P2] PASS D2 smallest fit at list tail
+[P2] PASS D2 skip too-small and larger blocks
+[P2] PASS D2 unique block exactly equals request
+[P2] PASS D2 three-way tie, larger block untouched
+[P2] PASS D2 tie that needs a split
+[P2] PASS D2 AT-P2-03 split takes the front of the block
+[P2] PASS D2 AT-P2-04 split remainder keeps its list position
+[P2] PASS D2 AT-P2-13 n=1, exact unique block, no zero-size rest
+[P2] PASS D3 AT-P2-05 merge with successor only
+[P2] PASS D3 AT-P2-06 merge with predecessor only
+[P2] PASS D3 AT-P2-07 merge with both neighbours
+[P2] PASS D3 AT-P2-08 no merge across a held page
+[P2] PASS D3 merge chain, then whole-block alloc
+[P2] PASS D4 AT-P2-09 absorbed head flag is cleared
+[P2] PASS D4 flags across split and out-of-order merge
+[P2] PASS D4 free_pages clears ref
+[P2] PASS D4 AT-P2-10 insertion order is address order
+[P2] PASS D4 AT-P2-14 init_memmap registered out of order
+[P2]   seed=0x2024b357 ops=1500 free_at_end=25 held_allocs=2
+[P2] PASS D5 random model check
+[P2]   seed=0x5eed0002 ops=1500 free_at_end=1 held_allocs=17
+[P2] PASS D5 random model check
+[P2]   seed=0xdeadbeef ops=1500 free_at_end=20 held_allocs=11
+[P2] PASS D5 random model check
+[P2] PASS D6 alloc on an empty free set
+[P2] PASS D6 AT-P2-11 nr_free accounting on split/fail
+[P2] PASS D6 AT-P2-12 failed allocs leave state intact
+[P2] PASS D6 n > nr_free and huge n
+[P2] SUMMARY run=30 pass=30 fail=0
+RESULT: PASS

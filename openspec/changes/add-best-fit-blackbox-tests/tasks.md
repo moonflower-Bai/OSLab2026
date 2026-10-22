@@ -10,7 +10,7 @@
 - [x] 2.1 直接运行 `sh test/lab2/run_p2.sh`：当前分支编译失败（`pmm.c` 调用未定义的 `page_init`），日志保存为 `results/p2_blackbox_20261021-185900.log`。
 - [x] 2.2 运行 `P2_PAGE_INIT_FROM=be87b20 sh test/lab2/run_p2.sh` 及 `--per-case`：30/30 通过，D1 自检 5 种损坏全部被发现，D5 三个种子各 1500 次操作通过；日志为 `results/p2_blackbox_20261021-185902.log` 与 `latest.log`。
 - [x] 2.3 运行 `P2_MANAGER=default` 自检：23/30 失败，确认检查会报错。
-- [ ] 2.4 合并练习 1 的 `page_init()` 后，不借用直接运行 `sh test/lab2/run_p2.sh`，确认 30/30 通过。
+- [x] 2.4 合并练习 1 的 `page_init()` 后，不借用直接运行 `sh test/lab2/run_p2.sh`，确认 30/30 通过。2026-10-22 在合并分支上复验：不设置 `P2_PAGE_INIT_FROM`，结果 30/30，日志 `test/lab2/results/p2_blackbox_20261022-000744.log`。
 
 外部前提：RISC-V 交叉工具链、QEMU、OpenSBI。
 

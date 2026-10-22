@@ -1,6 +1,5 @@
-# Lab2 P2 Best-Fit black-box run 20261021-185902
-# branch: Dev/Lab2/baijingren/best-fit commit: 5a948f5
-# page_init overlay from be87b20 (merge-base d52989b)
+# Lab2 P2 Best-Fit black-box run 20261022-000744
+# branch: Dev/Lab2/cyx/free-merge commit: 034d803
 ## all cases, one boot
 [P2] black-box suite start (P2_CASE=0, 30 cases)
 [P2] isolated: baseline=31924 chunks=1 arena=+845..+909

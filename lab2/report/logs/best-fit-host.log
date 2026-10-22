@@ -1,0 +1,11 @@
+# Host bitmap regression against the merged best_fit_pmm.c
+# Test source: Lab2 reference package tools/test_best_fit_host.c
+# (temporary harness under /tmp; not copied into the repository)
+#
+# gcc -std=gnu99 -O1 -g -Wall -Wno-unused -fno-builtin \
+#   -fsanitize=address,undefined -fno-omit-frame-pointer \
+#   -I lab2/libs -I lab2/kern/mm -I lab2/kern/debug \
+#   test_best_fit_host.c lab2/kern/mm/best_fit_pmm.c -o test_merged
+# ASAN_OPTIONS=detect_leaks=0 ./test_merged
+
+Host Best Fit: PASS (10000 operations, seed 0x4c414232)

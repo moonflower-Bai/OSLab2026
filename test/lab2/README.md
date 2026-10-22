@@ -5,9 +5,11 @@
 ```sh
 sh test/lab2/run_p2.sh                         # 全部用例一次启动；失败时自动逐例重跑
 sh test/lab2/run_p2.sh --per-case              # 每个用例单独启动
-P2_PAGE_INIT_FROM=be87b20 sh test/lab2/run_p2.sh   # 本分支缺 page_init 时借用 P1 提交
+P2_PAGE_INIT_FROM=be87b20 sh test/lab2/run_p2.sh   # 仅缺 page_init 的分支需要借用 P1 提交
 P2_MANAGER=default sh test/lab2/run_p2.sh      # 自检：换成 First-Fit，应当失败
 ```
+
+当前合并后的分支已包含 `page_init()`，直接运行 `sh test/lab2/run_p2.sh` 即可，不再需要 `P2_PAGE_INIT_FROM`。
 
 结果写入 `test/lab2/results/`（`latest.log` 是最近一次）。
 
