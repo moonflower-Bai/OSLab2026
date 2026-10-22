@@ -159,7 +159,10 @@ endif
 TARGETS: $(TARGETS)
 
 .DEFAULT_GOAL := TARGETS
-.PHONY: qemu spike test
+.PHONY: qemu spike test slub-host-test
+slub-host-test:
+	HOSTCC='$(HOSTCC)' python3 tools/run_slub_host.py
+
 qemu: $(UCOREIMG) $(SWAPIMG) $(SFSIMG)
 	$(V)$(QEMU) \
 		-machine virt \

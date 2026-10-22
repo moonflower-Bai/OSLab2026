@@ -1,0 +1,25 @@
+make: Entering directory '/mnt/c/Users/hews/Desktop/University/Semester5/OS/OSLab2026/lab2'
+HOSTCC='gcc' python3 tools/run_slub_host.py
+In file included from kern/mm/pmm.h:4,
+                 from kern/mm/default_pmm.c:1:
+kern/mm/default_pmm.c: In function ‘default_check’:
+kern/mm/default_pmm.c:192:18: error: comparison of integer expressions of different signedness: ‘int’ and ‘size_t’ {aka ‘long long unsigned int’} [-Werror=sign-compare]
+  192 |     assert(total == nr_free_pages());
+      |                  ^~
+kern/debug/assert.h:17:15: note: in definition of macro ‘assert’
+   17 |         if (!(x)) {                                     \
+      |               ^
+cc1: all warnings being treated as errors
+Traceback (most recent call last):
+  File "/mnt/c/Users/hews/Desktop/University/Semester5/OS/OSLab2026/lab2/tools/run_slub_host.py", line 61, in <module>
+    main()
+    ~~~~^^
+  File "/mnt/c/Users/hews/Desktop/University/Semester5/OS/OSLab2026/lab2/tools/run_slub_host.py", line 24, in main
+    subprocess.run(command, cwd=root, check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.14/subprocess.py", line 578, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['gcc', '-std=gnu99', '-O1', '-g', '-Wall', '-Wextra', '-Werror', '-Wno-unused-parameter', '-fno-builtin', '-fno-pie', '-no-pie', '-fsanitize=address,undefined', '-fno-omit-frame-pointer', '-Ilibs', '-Ikern/mm', '-Ikern/debug', 'tools/test_slub_host.c', 'kern/mm/slub.c', 'kern/mm/slub_test.c', 'kern/mm/default_pmm.c', '-o', '/tmp/lab2-slub-host-wt2ero_k/slub-host']' returned non-zero exit status 1.
+make: *** [Makefile:164: slub-host-test] Error 1
+make: Leaving directory '/mnt/c/Users/hews/Desktop/University/Semester5/OS/OSLab2026/lab2'
