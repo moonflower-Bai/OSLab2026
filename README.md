@@ -2,23 +2,23 @@
 
 ## 指导书
 
-[riscv64-ucore 操作系统实验指导书](http://8.135.34.58/lab2026/_book/)
+[riscv64-ucore 操作系统实验指导书](http://oslab.mobisys.top/lab2026/_book/)
 
-- [lab0 预备起](http://8.135.34.58/lab2026/_book/lab0/intro.html)
+- [lab0 预备起](http://oslab.mobisys.top/lab2026/_book/lab0/intro.html)
   - 环境、工具链、QEMU
-- [lab0.5 AI 驱动的操作系统实验](http://8.135.34.58/lab2026/_book/lab0.5/intro.html)
+- [lab0.5 AI 驱动的操作系统实验](http://oslab.mobisys.top/lab2026/_book/lab0.5/intro.html)
   - 提示词规格与 AI 协作方式
-- [lab1 最小可执行内核](http://8.135.34.58/lab2026/_book/lab1/lab1.html)
+- [lab1 最小可执行内核](http://oslab.mobisys.top/lab2026/_book/lab1/lab1.html)
 - lab2 至 lab9
-  - [lab2 物理内存和页表](http://8.135.34.58/lab2026/_book/lab2/lab2.html)
-  - [lab3 中断](http://8.135.34.58/lab2026/_book/lab3/lab3.html)
-  - [lab4 进程管理](http://8.135.34.58/lab2026/_book/lab4/lab4.html)
-  - [lab5 用户程序](http://8.135.34.58/lab2026/_book/lab5/lab5.html)
-  - [lab6 进程调度](http://8.135.34.58/lab2026/_book/lab6/lab6.html)
-  - [lab7 同步互斥](http://8.135.34.58/lab2026/_book/lab7/lab7.html)
-  - [lab8 文件系统](http://8.135.34.58/lab2026/_book/lab8/lab8.html)
-  - [lab9 页面置换与内存映射](http://8.135.34.58/lab2026/_book/lab9/lab9.html)
-- [附录](http://8.135.34.58/lab2026/_book/appendix/intro.html)
+  - [lab2 物理内存和页表](http://oslab.mobisys.top/lab2026/_book/lab2/lab2.html)
+  - [lab3 中断](http://oslab.mobisys.top/lab2026/_book/lab3/lab3.html)
+  - [lab4 进程管理](http://oslab.mobisys.top/lab2026/_book/lab4/lab4.html)
+  - [lab5 用户程序](http://oslab.mobisys.top/lab2026/_book/lab5/lab5.html)
+  - [lab6 进程调度](http://oslab.mobisys.top/lab2026/_book/lab6/lab6.html)
+  - [lab7 同步互斥](http://oslab.mobisys.top/lab2026/_book/lab7/lab7.html)
+  - [lab8 文件系统](http://oslab.mobisys.top/lab2026/_book/lab8/lab8.html)
+  - [lab9 页面置换与内存映射](http://oslab.mobisys.top/lab2026/_book/lab9/lab9.html)
+- [附录](http://oslab.mobisys.top/lab2026/_book/appendix/intro.html)
 
 ## 开发进度
 
