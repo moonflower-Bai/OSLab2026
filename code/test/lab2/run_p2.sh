@@ -17,8 +17,8 @@
 set -u
 
 HERE=$(cd "$(dirname "$0")" && pwd)
-REPO=$(cd "$HERE/../.." && pwd)
-LAB2="$REPO/lab2"
+REPO=$(cd "$HERE/../../.." && pwd)
+LAB2="$REPO/code"
 RESULTS="$HERE/results"
 QEMU=${QEMU:-qemu-system-riscv64}
 BOOT_TIMEOUT=${BOOT_TIMEOUT:-60}
