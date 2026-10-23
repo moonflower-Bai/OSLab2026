@@ -288,7 +288,7 @@ SLUB 阶段在回归中发现 `default_init_memmap()` 与 `default_free_pages()`
 
 内部碎片是该算法本身的代价：`alloc_pages(5)` 实际占用 8 页。
 
-实现提示词（Prompt 1）给出背景与约束（不修改 `best_fit_pmm.c`、`default_pmm.c`、`page_init()` 和现有测试）、`MAX_ORDER`、两类标志位的约定、`init_memmap`/`alloc`/`free`/`check` 的行为，以及“不用 `__builtin_clz/ctz`、通过 `-Wall -Werror`”的工程约束。测试提示词（Prompt 2）要求内核内 `buddy_check()` 与主机端 `test_buddy_host.c`（256 个 `struct Page` + 桩函数，开启 ASan/UBSan），覆盖初始化、分配、释放合并、随机和诊断输出。完整原文见 `lab2/report/buddy.md` 第二、三节。
+实现提示词（Prompt 1）给出背景与约束（不修改 `best_fit_pmm.c`、`default_pmm.c`、`page_init()` 和现有测试）、`MAX_ORDER`、两类标志位的约定、`init_memmap`/`alloc`/`free`/`check` 的行为，以及“不用 `__builtin_clz/ctz`、通过 `-Wall -Werror`”的工程约束。测试提示词（Prompt 2）要求内核内 `buddy_check()` 与主机端 `test_buddy_host.c`（256 个 `struct Page` + 桩函数，开启 ASan/UBSan），覆盖初始化、分配、释放合并、随机和诊断输出。完整原文见 [prompt.md](prompt.md)。
 
 #### 测试覆盖
 
@@ -312,7 +312,7 @@ SLUB 阶段在回归中发现 `default_init_memmap()` 与 `default_free_pages()`
 
 负责人：2411783-何闻硕
 
-设计要点（详见 `lab2/report/slub.md`）：
+设计要点：
 
 - 两层结构：底层仍是 `alloc_pages/free_pages`，上层提供 `kmalloc(size)` / `kfree(ptr)`。
 - 16～2048 字节的 2 次幂大小缓存；每个 slab 占一页，页首 128 字节为元数据，随后是对象槽位；空闲对象的首个指针大小的空间保存下一空闲对象，不需要额外节点。
@@ -323,7 +323,7 @@ SLUB 阶段在回归中发现 `default_init_memmap()` 与 `default_free_pages()`
 
 当前 64 位构建里，slab 元数据 120 字节，对齐后对象起点偏移 128；一页能放的槽位数为 `floor((4096-128)/规格)`：16/32/64/128 字节分别为 248/124/62/31，256/512/1024/2048 字节分别为 15/7/3/1。大对象所需页数为 `ceil((128+size)/4096)`，例如 6000 字节需 2 页。
 
-实现提示词要求两层结构、2 次幂缓存、partial slab 管理、所有权校验、`kmalloc(0)` 返回 `NULL`、溢出检查和不依赖 libc；测试提示词要求按公开行为设计，不复制内部选槽逻辑，覆盖 29 种尺寸、填满多个 slab、full→partial 转换、混合释放后页数恢复、极值、真实耗尽底层页以及固定种子随机，并在独立进程中验证非法释放会 panic。原文见 `lab2/report/slub.md`。
+实现提示词要求两层结构、2 次幂缓存、partial slab 管理、所有权校验、`kmalloc(0)` 返回 `NULL`、溢出检查和不依赖 libc；测试提示词要求按公开行为设计，不复制内部选槽逻辑，覆盖 29 种尺寸、填满多个 slab、full→partial 转换、混合释放后页数恢复、极值、真实耗尽底层页以及固定种子随机，并在独立进程中验证非法释放会 panic。原文见 [prompt.md](prompt.md)。
 
 #### 测试要点
 
@@ -385,9 +385,9 @@ slub_check() succeeded! free pages restored: 31927
 
 | 项目 | 结果 | 来源 |
 |---|---|---|
-| 页初始化，128 MiB / 64 MiB | 自检通过，32768 / 16384 个描述符 | `lab2/report/logs/hews-qemu-*.log` |
-| Buddy 主机回归 | PASS，2000 次操作 | `lab2/report/logs/buddy-host.log` |
-| SLUB 主机回归 | PASS，另有 7 类预期 panic | `lab2/report/logs/slub-host.log` |
+| 页初始化，128 MiB / 64 MiB | 自检通过，32768 / 16384 个描述符 | 本地 QEMU 运行记录 |
+| Buddy 主机回归 | PASS，2000 次操作 | 本地主机测试记录 |
+| SLUB 主机回归 | PASS，另有 7 类预期 panic | 本地主机测试记录 |
 
 ---
 
