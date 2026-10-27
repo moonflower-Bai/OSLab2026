@@ -80,7 +80,43 @@ void print_regs(struct pushregs *gpr) {
     cprintf("  t6       0x%08x\n", gpr->t6);
 }
 
+static uintptr_t exception_instruction_length(uintptr_t epc) {
+    uint16_t parcel;
+
+    parcel = *(uint16_t *)epc;
+    if ((parcel & 0x3) == 0x3) {
+        return 4;
+    }
+    return 2;
+}
+
 //lab3 function2 YOUR CODE
+void exception_handler(struct trapframe *tf) {
+    uintptr_t epc;
+
+    switch (tf->cause) {
+    case CAUSE_ILLEGAL_INSTRUCTION:
+        epc = tf->epc;
+        cprintf("Illegal instruction at 0x%016llx\n", (unsigned long long)epc);
+        tf->epc = epc + exception_instruction_length(epc);
+        break;
+    case CAUSE_BREAKPOINT:
+        epc = tf->epc;
+        cprintf("Breakpoint at 0x%016llx\n", (unsigned long long)epc);
+        tf->epc = epc + exception_instruction_length(epc);
+        break;
+    default:
+        print_trapframe(tf);
+        if (trap_in_kernel(tf)) {
+            panic("unexpected trap in kernel.\n");
+        }
+        break;
+    }
+}
+
+void interrupt_handler(struct trapframe *tf) {
+    // TODO: handle interrupts here
+}
 
 
 static inline void trap_dispatch(struct trapframe *tf) {
