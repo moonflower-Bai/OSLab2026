@@ -4,7 +4,7 @@ change: lab3-exception-handler
 reviewed_for_relevance: true
 reviewed_for_sensitive_data: true
 
-## 2026-10-27T23:12:00+08:00
+## 2026-10-27 23:12:00 +0800
 
 [Prompt]
 请你根据当前项目内容，完成一个RISCV上操作系统的异常处理。异常处理函数签名是void exception_handler(struct trapframe *tf);
