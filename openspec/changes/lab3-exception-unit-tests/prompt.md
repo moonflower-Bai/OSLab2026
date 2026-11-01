@@ -4,7 +4,7 @@ change: lab3-exception-unit-tests
 reviewed_for_relevance: true
 reviewed_for_sensitive_data: true
 
-## 2026-10-27T22:26:00+08:00
+## 2026-10-27 22:26:00 +0800
 
 [prompt]
 请你根据当前项目内容，实现对RISC-V 上操作系统的异常处理的单元测试。测试主要包括模式切换，恢复状态时的指针地址是否正确，以及各个异常处理逻辑是否正确。
@@ -54,7 +54,7 @@ reviewed_for_sensitive_data: true
 - trap_in_kernel判断取反
 - 修改了tf的其他字段
 
-## 2026-10-27T23:15:00+08:00
+## 2026-10-27 23:15:00 +0800
 
 请对 lab3/test/exception.sh 及 lab3/test/exception/ 做以下修改。范围仍然只限这些文件，不要读 lab3/tools，不要修改 lab3 以外的文件。
 
@@ -86,7 +86,7 @@ reviewed_for_sensitive_data: true
 - 以上每项修改后，原有的反向用例（epc 不推进、一律 +4、一律 +2、断点与非法指令互换、未知异常漏调 print_trapframe、无条件 panic、无条件返回、trap_in_kernel 取反、修改其他字段）必须仍然被抓出来。
 
 
-## 2026-10-27T23:05:00+08:00
+## 2026-10-27 23:05:00 +0800
 
 - 逐个 cause 的期望，SPP=0 与 SPP=1 各测一遍；"返回"指不 panic：
 
