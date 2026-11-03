@@ -1,6 +1,6 @@
 ## 1. Implementation
 
-- [ ] 1.1 在 `lab3/kern/trap/trap.c` 中增加 `exception_handler()` 声明，实现 `IRQ_S_SOFT`、`IRQ_S_EXT` 和未知中断分支。
+- [x] 1.1 在 `lab3/kern/trap/trap.c` 中增加 `exception_handler()` 声明，实现 `IRQ_S_SOFT`、`IRQ_S_EXT` 和未知中断分支。
 - [ ] 1.2 增加 `IRQ_S_TIMER` 分支：`clock_set_next_event()`、`ticks++`、每 `TICK_NUM` 调用 `print_ticks()`。
 - [ ] 1.3 增加 `<sbi.h>`、`SHUTDOWN_AFTER`，累计输出达到阈值后调用 `sbi_shutdown()`。
 - [ ] 1.4 确认未修改 `trapentry.S`、`exception_handler()` 定义、lab2 代码、Makefile 和测试脚本。
