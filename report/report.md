@@ -16,7 +16,7 @@
 | 陈彦兴（`cyx`） | 功能模块二中的中断分类、时钟重设、计数输出与阈值关机 | `094ffa5`、`5b6c08c`、`57580c1` |
 | 何闻硕（`hews`） | 功能模块一：Trap 入口与上下文恢复；Lab2 启动映射和物理内存依赖 | `8171bde`、`0954228`、`cbfe627`、`dc03100` |
 
-白景仁负责报告正文整合；中断部分按中断分类、时钟计数、关机阈值分步提交，Trap 入口与异常处理合入后统一做端到端验证。Lab3 的 Lab2 依赖按功能片段回填，保留本章的中断保护包装，未重新引入 Buddy 或 SLUB。
+中断部分按中断分类、时钟计数、关机阈值分步提交，Trap 入口与异常处理合入后统一做端到端验证。Lab3 的 Lab2 依赖按功能片段回填，保留本章的中断保护包装，未重新引入 Buddy 或 SLUB。
 
 ---
 
@@ -36,10 +36,10 @@
 
 | 软件 | 版本 |
 |------|----------------|
-| riscv64-unknown-elf-gcc | 16.2.0 |
-| qemu-system-riscv64 | 11.1.2 |
+| riscv64-unknown-elf-gcc | 16.1.0 |
+| qemu-system-riscv64 | qemu-10.2.2-1.fc44 |
 | 固件 | OpenSBI v1.8.1，QEMU `-bios default` |
-| 宿主环境 | macOS，Make、Python 3、POSIX shell |
+| 宿主环境 | Linux(Fedora)，Make、Python 3、POSIX shell |
 
 当前 QEMU 配合默认 OpenSBI 和 Makefile 的 `-device loader` 时，`Domain0 Next Address` 为 0，内核没有运行。运行和评分验证时在临时副本中改用 `-kernel bin/ucore.img`，没有改变内核源码或评分断言。原始命令的实测结果与这一区别见第五章。
 
@@ -279,9 +279,7 @@ make -C lab3 qemu QEMU="qemu-system-riscv64 -kernel bin/ucore.img"
 - Best-Fit 自检成功，空闲页为 31928 页。
 - 连续输出 10 行 `100 ticks`，随后进程退出码为 0，证明持续时钟、重复 Trap 返回和关机路径都已执行。
 
-![Lab3 构建、启动、时钟输出与自动关机的实际结果整理图](./images/qemu_result.png)
-
-图中省去了固件平台列表，其余数值和十次时钟输出都是原始结果。
+![Lab3 构建、启动、时钟输出与自动关机的实际结果截图](./images/qemu_result.png)
 
 ### 5.2 Trap 上下文专项验证
 
@@ -294,9 +292,6 @@ make -C lab3 qemu QEMU="qemu-system-riscv64 -kernel bin/ucore.img"
 | 通用寄存器 | 返回后的 `x0`～`x31` 共 32 项通过；进入帧中的 `tf-x0`～`tf-x31` 共 32 项通过 |
 | 帧中的原因与模式 | `tf-cause`、`tf-spp` 通过 |
 
-![Trap 上下文 72 项检查结果摘要](./images/trap_context_result.png)
-
-图中把连续的寄存器通过项合并了几行，其余按原始输出列出。
 
 ### 5.3 原始评分测试
 
