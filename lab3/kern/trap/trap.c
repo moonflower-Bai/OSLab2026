@@ -92,7 +92,7 @@ static uintptr_t exception_instruction_length(uintptr_t epc) {
     return 2;
 }
 
-//lab3 function2 YOUR CODE
+//lab3 function2 2413597
 void exception_handler(struct trapframe *tf) {
     uintptr_t epc;
 
@@ -115,6 +115,7 @@ void exception_handler(struct trapframe *tf) {
         break;
     }
 }
+//lab3 function2 2412731
 void interrupt_handler(struct trapframe *tf) {
     uintptr_t cause = tf->cause & ~((uintptr_t)1 << 63);
 

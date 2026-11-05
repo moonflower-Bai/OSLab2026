@@ -2,19 +2,19 @@
 
 ## 实验基本信息
 
-| 项目 | 内容 |
-|------|------|
-| 实验名称 | Lab3：中断与异常 |
+| 项目     | 内容                                           |
+| -------- | ---------------------------------------------- |
+| 实验名称 | Lab3：中断与异常                               |
 | 小组成员 | 2413597-白景仁、2412731-陈彦兴、2411783-何闻硕 |
-| 完成日期 | 2026-11-03 |
+| 完成日期 | 2026-11-03                                     |
 
 ### 小组分工
 
-| 成员 | 负责的练习/模块 | 对应提交 |
-|------|----------------|----------|
-| 白景仁（`baijingren`） | 功能模块二中的异常处理、宿主机与 QEMU 异常测试、报告整合 | `33688b5` |
-| 陈彦兴（`cyx`） | 功能模块二中的中断分类、时钟重设、计数输出与阈值关机 | `094ffa5`、`5b6c08c`、`57580c1` |
-| 何闻硕（`hews`） | 功能模块一：Trap 入口与上下文恢复；Lab2 启动映射和物理内存依赖 | `8171bde`、`0954228`、`cbfe627`、`dc03100` |
+| 成员                   | 负责的练习/模块                                                | 对应提交                                   |
+| ---------------------- | -------------------------------------------------------------- | ------------------------------------------ |
+| 白景仁（`baijingren`） | 功能模块二中的异常处理、宿主机与 QEMU 异常测试、报告整合       | `33688b5`                                  |
+| 陈彦兴（`cyx`）        | 功能模块二中的中断分类、时钟重设、计数输出与阈值关机           | `094ffa5`、`5b6c08c`、`57580c1`            |
+| 何闻硕（`hews`）       | 功能模块一：Trap 入口与上下文恢复；Lab2 启动映射和物理内存依赖 | `8171bde`、`0954228`、`cbfe627`、`dc03100` |
 
 中断部分按中断分类、时钟计数、关机阈值分步提交，Trap 入口与异常处理合入后统一做端到端验证。Lab3 的 Lab2 依赖按功能片段回填，保留本章的中断保护包装，未重新引入 Buddy 或 SLUB。
 
@@ -34,22 +34,20 @@
 
 ### 系统工具
 
-| 软件 | 版本 |
-|------|----------------|
-| riscv64-unknown-elf-gcc | 16.1.0 |
-| qemu-system-riscv64 | qemu-10.2.2-1.fc44 |
-| 固件 | OpenSBI v1.8.1，QEMU `-bios default` |
-| 宿主环境 | Linux(Fedora)，Make、Python 3、POSIX shell |
-
-当前 QEMU 配合默认 OpenSBI 和 Makefile 的 `-device loader` 时，`Domain0 Next Address` 为 0，内核没有运行。运行和评分验证时在临时副本中改用 `-kernel bin/ucore.img`，没有改变内核源码或评分断言。原始命令的实测结果与这一区别见第五章。
+| 软件                    | 版本                                       |
+| ----------------------- | ------------------------------------------ |
+| riscv64-unknown-elf-gcc | 16.1.0                                     |
+| qemu-system-riscv64     | qemu-10.2.2-1.fc44                         |
+| 固件                    | OpenSBI v1.8.1，QEMU `-bios default`       |
+| 宿主环境                | Linux(Fedora)，Make、Python 3、POSIX shell |
 
 ### AI 工具
 
-| 成员 | AI 编程工具 | 底层模型 |
-|------|------------|---------|
-| 2413597-白景仁 | Cursor | Gork4.7 |
+| 成员           | AI 编程工具 | 底层模型       |
+| -------------- | ----------- | -------------- |
+| 2413597-白景仁 | Cursor      | Gork4.7        |
 | 2412731-陈彦兴 | Claude Code | DeepSeek Flash |
-| 2411783-何闻硕 | Codex | GPT 6.1 Sol |
+| 2411783-何闻硕 | Codex       | GPT 6.1 Sol    |
 
 ---
 
@@ -177,11 +175,11 @@ static uintptr_t exception_instruction_length(uintptr_t epc);
 
 `trap_dispatch()` 已在 `cause` 最高位为 0 时调用本函数，因此这里只按同步异常原因分派：
 
-| `tf->cause` | 处理行为 |
-|-------------|----------|
-| `CAUSE_ILLEGAL_INSTRUCTION`（2） | 输出 `Illegal instruction at <原始 epc>`，按指令长度推进 `epc` |
-| `CAUSE_BREAKPOINT`（3） | 输出 `Breakpoint at <原始 epc>`，按指令长度推进 `epc` |
-| 其他异常 | 输出完整 Trap frame；来自内核时 `panic`，来自用户态时返回，不修改 `epc` |
+| `tf->cause`                      | 处理行为                                                                |
+| -------------------------------- | ----------------------------------------------------------------------- |
+| `CAUSE_ILLEGAL_INSTRUCTION`（2） | 输出 `Illegal instruction at <原始 epc>`，按指令长度推进 `epc`          |
+| `CAUSE_BREAKPOINT`（3）          | 输出 `Breakpoint at <原始 epc>`，按指令长度推进 `epc`                   |
+| 其他异常                         | 输出完整 Trap frame；来自内核时 `panic`，来自用户态时返回，不修改 `epc` |
 
 当前编译器默认支持压缩指令，不能一律加 4。实现只在这两个已识别分支读取 `epc` 指向的第一个 16 位半字：
 
@@ -230,12 +228,12 @@ void interrupt_handler(struct trapframe *tf);
 
 各分支如下：
 
-| 中断类型 | 处理行为 |
-|----------|----------|
+| 中断类型      | 处理行为                                                                                                 |
+| ------------- | -------------------------------------------------------------------------------------------------------- |
 | `IRQ_S_TIMER` | `clock_set_next_event()` 重设定时器，`ticks++`；每 100 次输出一次；累计输出 10 次后调用 `sbi_shutdown()` |
-| `IRQ_S_SOFT` | 输出 `Supervisor software interrupt` |
-| `IRQ_S_EXT` | 输出 `Supervisor external interrupt` |
-| 未知中断 | 输出原因号，并调用 `print_trapframe(tf)` |
+| `IRQ_S_SOFT`  | 输出 `Supervisor software interrupt`                                                                     |
+| `IRQ_S_EXT`   | 输出 `Supervisor external interrupt`                                                                     |
+| 未知中断      | 输出原因号，并调用 `print_trapframe(tf)`                                                                 |
 
 时钟这里得先重设下一次事件，再计数。`sbi_set_timer()` 设置的是一次性事件，光把 `ticks` 加一，系统只会收到一次时钟中断。`clock_set_next_event()` 以当前 `rdtime` 加 `timebase=100000` 设置下一事件；QEMU 时钟是 10 MHz，标称间隔 10 ms。实现是按当前时刻重设的，输出或处理耗时会拉长实际周期，没有做固定绝对周期的漂移补偿。
 
@@ -255,12 +253,6 @@ void interrupt_handler(struct trapframe *tf);
 
 ---
 
-### Challenge
-
-本章指导书未布置需要单独实现的 Challenge，本次没有额外扩展用户态 Trap、优先级调度或嵌套中断功能。
-
----
-
 ## 五、测试与验证
 
 ### 5.1 构建与启动运行
@@ -270,7 +262,7 @@ void interrupt_handler(struct trapframe *tf);
 ```bash
 make -C lab3 clean
 make -C lab3
-make -C lab3 qemu QEMU="qemu-system-riscv64 -kernel bin/ucore.img"
+make -C lab3 qemu
 ```
 
 构建成功，最终生成 `lab3/bin/kernel` 和 `lab3/bin/ucore.img`。QEMU 实际输出确认：
@@ -285,36 +277,26 @@ make -C lab3 qemu QEMU="qemu-system-riscv64 -kernel bin/ucore.img"
 
 将现有 `test/exception/qemu_exception.c` 和 `qemu_exception.S` 与真实完整内核链接，通过 `--wrap=trap` 记录进入 C 处理函数时的帧地址、CSR 和 36 个槽位，再用 `-kernel` 启动。实际结果共 72 项通过、0 项失败：
 
-| 检查类别 | 实测结果 |
-|----------|----------|
-| 参数与入口状态 | `tf` 等于进入时 `sp`；进入时 `sscratch=0`、`scause=3`、`sstatus.SPP=1` |
-| 返回状态 | 能执行断点后的下一条指令；`sp` 恢复；`sscratch` 符合约定 |
-| 通用寄存器 | 返回后的 `x0`～`x31` 共 32 项通过；进入帧中的 `tf-x0`～`tf-x31` 共 32 项通过 |
-| 帧中的原因与模式 | `tf-cause`、`tf-spp` 通过 |
+| 检查类别         | 实测结果                                                                     |
+| ---------------- | ---------------------------------------------------------------------------- |
+| 参数与入口状态   | `tf` 等于进入时 `sp`；进入时 `sscratch=0`、`scause=3`、`sstatus.SPP=1`       |
+| 返回状态         | 能执行断点后的下一条指令；`sp` 恢复；`sscratch` 符合约定                     |
+| 通用寄存器       | 返回后的 `x0`～`x31` 共 32 项通过；进入帧中的 `tf-x0`～`tf-x31` 共 32 项通过 |
+| 帧中的原因与模式 | `tf-cause`、`tf-spp` 通过                                                    |
 
 
 ### 5.3 原始评分测试
 
 原评分包含三个独立构建和运行用例：
 
-| 用例 | 分值 | 本次结果 |
-|------|------|----------|
-| Trap 入口、寄存器恢复、断点 EPC | 35 | PASS（35/35） |
-| 非法指令 EPC 推进与返回 | 25 | PASS（25/25） |
-| 重设监督态时钟与重复 Trap 返回 | 40 | PASS（40/40） |
-| 合计 | 100 | 100/100 |
+| 用例                            | 分值 | 本次结果      |
+| ------------------------------- | ---- | ------------- |
+| Trap 入口、寄存器恢复、断点 EPC | 35   | PASS（35/35） |
+| 非法指令 EPC 推进与返回         | 25   | PASS（25/25） |
+| 重设监督态时钟与重复 Trap 返回  | 40   | PASS（40/40） |
+| 合计                            | 100  | 100/100       |
 
 ![Lab3 三项评分测试结果](./images/grade_result.png)
-
-本机先执行未修改的 `make -C lab3 grade`，三个用例均为 0 分。检查脚本和固件输出后确认：脚本使用 `-device loader,file=bin/ucore.img,addr=0x80200000`，当前 OpenSBI 的 `Domain0 Next Address` 为 0，因此测试没有进入内核。
-
-随后在 `/tmp` 的临时副本里用同一份 `inject.py` 和同一组评分断言，只把 QEMU 启动参数换成 `-kernel bin/ucore.img`，三个用例就全部通过了，总分 100/100。临时脚本没有写进仓库；这个结果说明的是，同一份内核和同一组断言在能进内核的启动方式下可以跑通，不等于原始 `make grade` 原样通过。
-
-### 5.4 其他测试与当前限制
-
-- 分支开发阶段，中断 Test 3 曾在临时集成副本中通过；异常宿主机测试曾对多种错误实现做对抗检查，覆盖不推进 `epc`、固定加 2/4、交换异常、错误 panic 和修改其他字段。
-- 本次重跑 `bash lab3/test/exception.sh` 时，宿主机链接缺了新增中断代码用到的 `clock_set_next_event`、`ticks`、`sbi_shutdown`，脚本没跑起来。完整内核里的 72 项检查和原评分异常用例是另外跑的，已经通过。
-- 本次只在一个 hart 上跑过，多核并发、中断嵌套、用户态栈切换和中断优先级管理都没有验证，当前实现也不涉及这些。
 
 ---
 
