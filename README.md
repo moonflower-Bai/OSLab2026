@@ -22,13 +22,13 @@
 
 ## 开发进度
 
-`lab-status.json` 是章节状态的唯一事实来源。当前章节为 `lab1`，冻结章节为空。
+`lab-status.json` 是章节状态的唯一事实来源。当前章节为 `lab4`，冻结章节为空。
 
 - 已放入仓库
-  - `lab1/`：最小内核骨架，当前练习是阅读启动流程；构建与运行要求见 [lab1/AGENTS.md](lab1/AGENTS.md)
+  - `lab4/lab4_new/`：进程管理实验骨架；环境与使用说明见 [lab4/README.md](lab4/README.md)
   - `0_environment_setup.md`、`3_startdash.md`：环境说明
-- 尚未放入
-  - `lab2/` 至 `lab9/`
+- 当前分支未包含
+  - `lab1/` 至 `lab3/`、`lab5/` 至 `lab9/`；此前章节的代码请在对应历史分支查看
 
 ## 开发规范
 
