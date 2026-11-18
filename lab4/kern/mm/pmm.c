@@ -261,20 +261,57 @@ struct Page *get_page(pde_t *pgdir, uintptr_t la, pte_t **ptep_store)
 }
 
 //LAB4 function1 YOUR CODE
+int page_insert(pde_t *pgdir, struct Page *page, uintptr_t la, uint32_t perm)
+{
+    pte_t *ptep = get_pte(pgdir, la, 1);
+    if (ptep == NULL)
+    {
+        return -E_NO_MEM;
+    }
 
+    pte_t old_pte = *ptep;
+    struct Page *old_page = (old_pte & PTE_V) ? pte2page(old_pte) : NULL;
+    if (old_page != page)
+    {
+        page_ref_inc(page);
+    }
 
+    *ptep = pte_create(page2ppn(page), perm);
+    if (old_page == NULL)
+    {
+        asm volatile("sfence.vma" : : : "memory");
+    }
+    else
+    {
+        tlb_invalidate(pgdir, la);
+        if (old_page != page && page_ref_dec(old_page) == 0)
+        {
+            free_page(old_page);
+        }
+    }
+    return 0;
+}
 
+void page_remove(pde_t *pgdir, uintptr_t la)
+{
+    pte_t *ptep = get_pte(pgdir, la, 0);
+    if (ptep == NULL || !(*ptep & PTE_V))
+    {
+        return;
+    }
 
+    struct Page *old_page = pte2page(*ptep);
+    *ptep = 0;
+    tlb_invalidate(pgdir, la);
+    if (page_ref_dec(old_page) == 0)
+    {
+        free_page(old_page);
+    }
+}
 
-
-
-// invalidate a TLB entry, but only if the page tables being
-// edited are the ones currently in use by the processor.
 void tlb_invalidate(pde_t *pgdir, uintptr_t la)
 {
-    // flush_tlb();
-    // The flush_tlb flush the entire TLB, is there any better way?
-    asm volatile("sfence.vma %0" : : "r"(la));
+    asm volatile("sfence.vma %0" : : "r"(la) : "memory");
 }
 
 static void check_alloc_page(void)
