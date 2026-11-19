@@ -10,7 +10,7 @@ wakeup_proc(struct proc_struct *proc) {
     proc->state = PROC_RUNNABLE;
 }
 
-//LAB4 function3 YOUR CODE
+//LAB4 function3 2412731
 void
 schedule(void) {
     bool intr_flag;
