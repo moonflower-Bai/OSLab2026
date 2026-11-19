@@ -222,3 +222,27 @@ init_main(void *arg)
 
 
 //LAB4 function3 YOUR CODE
+void proc_run(struct proc_struct *proc)
+{
+    if (proc == current)
+    {
+        return;
+    }
+
+    bool intr_flag;
+    struct proc_struct *prev = current;
+
+    local_intr_save(intr_flag);
+    {
+        current = proc;
+        /* 骨架中的 lsatp 只适用于 RV32，这里按 Sv39 写入 satp。 */
+        write_csr(satp, 0x8000000000000000UL |
+                            (proc->pgdir >> RISCV_PGSHIFT));
+        if (proc->pgdir != prev->pgdir)
+        {
+            asm volatile("sfence.vma" ::: "memory");
+        }
+        switch_to(&(prev->context), &(proc->context));
+    }
+    local_intr_restore(intr_flag);
+}
