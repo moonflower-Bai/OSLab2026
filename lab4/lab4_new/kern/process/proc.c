@@ -246,3 +246,14 @@ void proc_run(struct proc_struct *proc)
     }
     local_intr_restore(intr_flag);
 }
+
+void cpu_idle(void)
+{
+    while (1)
+    {
+        if (current->need_resched)
+        {
+            schedule();
+        }
+    }
+}
