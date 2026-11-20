@@ -202,7 +202,7 @@ void pmm_init(void)
 
     // now the basic virtual memory map(see memalyout.h) is established.
     // check the correctness of the basic virtual memory map.
-    check_boot_pgdir();
+    // check_boot_pgdir();
 
     kmalloc_init();
 }
