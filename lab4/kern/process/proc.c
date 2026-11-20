@@ -218,7 +218,123 @@ init_main(void *arg)
     return 0;
 }
 
-//LAB4 function2 YOUR CODE
+//LAB4 function2 2411783
+
+// Create a PCB whose fields are safe to inspect even before it is registered.
+static struct proc_struct *
+alloc_proc(void)
+{
+    struct proc_struct *proc = kmalloc(sizeof(*proc));
+    if (proc != NULL)
+    {
+        memset(proc, 0, sizeof(*proc));
+        proc->state = PROC_UNINIT;
+        proc->pid = -1;
+        proc->pgdir = boot_pgdir_pa;
+        list_init(&proc->list_link);
+        list_init(&proc->hash_link);
+    }
+    return proc;
+}
+
+// Lab 4 creates kernel threads only; user address spaces arrive in a later lab.
+static int
+copy_mm(uint32_t clone_flags, struct proc_struct *proc)
+{
+    (void)clone_flags;
+    (void)proc;
+    return 0;
+}
+
+static void
+copy_thread(struct proc_struct *proc, uintptr_t stack, struct trapframe *tf)
+{
+    uintptr_t stack_top = proc->kstack + KSTACKPAGE * PGSIZE;
+    proc->tf = (struct trapframe *)(stack_top - sizeof(struct trapframe));
+    *proc->tf = *tf;
+    proc->tf->gpr.a0 = 0;
+    proc->tf->gpr.sp = stack != 0 ? stack : stack_top;
+    proc->context.ra = (uintptr_t)forkret;
+    proc->context.sp = (uintptr_t)proc->tf;
+}
+
+int
+do_fork(uint32_t clone_flags, uintptr_t stack, struct trapframe *tf)
+{
+    int ret = -E_NO_MEM;
+    struct proc_struct *proc = alloc_proc();
+    if (proc == NULL)
+        return ret;
+
+    proc->parent = current;
+    if (setup_kstack(proc) != 0)
+        goto bad_proc;
+    if ((ret = copy_mm(clone_flags, proc)) != 0)
+        goto bad_kstack;
+    copy_thread(proc, stack, tf);
+
+    bool intr_flag;
+    local_intr_save(intr_flag);
+    if (nr_process >= MAX_PROCESS)
+    {
+        local_intr_restore(intr_flag);
+        ret = -E_NO_FREE_PROC;
+        goto bad_kstack;
+    }
+    proc->pid = get_pid();
+    hash_proc(proc);
+    list_add(&proc_list, &proc->list_link);
+    nr_process++;
+    wakeup_proc(proc);
+    local_intr_restore(intr_flag);
+    return proc->pid;
+
+bad_kstack:
+    put_kstack(proc);
+bad_proc:
+    kfree(proc);
+    return ret;
+}
+
+int
+kernel_thread(int (*fn)(void *), void *arg, uint32_t clone_flags)
+{
+    struct trapframe tf;
+    memset(&tf, 0, sizeof(tf));
+    tf.gpr.s0 = (uintptr_t)fn;
+    tf.gpr.s1 = (uintptr_t)arg;
+    tf.status = (read_csr(sstatus) | SSTATUS_SPP | SSTATUS_SPIE) & ~SSTATUS_SIE;
+    tf.epc = (uintptr_t)kernel_thread_entry;
+    return do_fork(clone_flags | CLONE_VM, 0, &tf);
+}
+
+void
+proc_init(void)
+{
+    static const char idle_name[PROC_NAME_LEN + 1] = "idle";
+    static const char init_name[PROC_NAME_LEN + 1] = "init";
+    list_init(&proc_list);
+    for (int i = 0; i < HASH_LIST_SIZE; i++)
+        list_init(&hash_list[i]);
+
+    idleproc = alloc_proc();
+    if (idleproc == NULL)
+        panic("cannot allocate idle process");
+    idleproc->pid = 0;
+    idleproc->state = PROC_RUNNABLE;
+    idleproc->kstack = (uintptr_t)bootstack;
+    idleproc->need_resched = 1;
+    set_proc_name(idleproc, idle_name);
+    nr_process = 1;
+    current = idleproc;
+
+    int pid = kernel_thread(init_main, "Hello world!!", 0);
+    if (pid <= 0)
+        panic("cannot create init process: %d", pid);
+    initproc = find_proc(pid);
+    assert(initproc != NULL && initproc->pid == 1);
+    set_proc_name(initproc, init_name);
+}
 
 
 //LAB4 function3 2412731
