@@ -83,7 +83,76 @@ void print_regs(struct pushregs *gpr)
 
 extern struct mm_struct *check_mm_struct;
 
-//lab3 请补充你在lab3中的代码
+/* trap_in_kernel - test if trap happened in kernel */
+bool trap_in_kernel(struct trapframe *tf)
+{
+    return (tf->status & SSTATUS_SPP) != 0;
+}
+
+static uintptr_t exception_instruction_length(uintptr_t epc)
+{
+    uint16_t parcel;
+
+    parcel = *(uint16_t *)epc;
+    if ((parcel & 0x3) == 0x3)
+    {
+        return 4;
+    }
+    return 2;
+}
+
+void exception_handler(struct trapframe *tf)
+{
+    uintptr_t epc;
+
+    switch (tf->cause)
+    {
+    case CAUSE_ILLEGAL_INSTRUCTION:
+        epc = tf->epc;
+        cprintf("Illegal instruction at 0x%016llx\n", (unsigned long long)epc);
+        tf->epc = epc + exception_instruction_length(epc);
+        break;
+    case CAUSE_BREAKPOINT:
+        epc = tf->epc;
+        cprintf("Breakpoint at 0x%016llx\n", (unsigned long long)epc);
+        tf->epc = epc + exception_instruction_length(epc);
+        break;
+    default:
+        print_trapframe(tf);
+        if (trap_in_kernel(tf))
+        {
+            panic("unexpected trap in kernel.\n");
+        }
+        break;
+    }
+}
+
+void interrupt_handler(struct trapframe *tf)
+{
+    uintptr_t cause = tf->cause & ~((uintptr_t)1 << 63);
+
+    switch (cause)
+    {
+    case IRQ_S_TIMER:
+        clock_set_next_event();
+        ticks++;
+        if (ticks % TICK_NUM == 0)
+        {
+            print_ticks();
+        }
+        break;
+    case IRQ_S_SOFT:
+        cprintf("Supervisor software interrupt\n");
+        break;
+    case IRQ_S_EXT:
+        cprintf("Supervisor external interrupt\n");
+        break;
+    default:
+        cprintf("Unknown interrupt: cause %d\n", (int)cause);
+        print_trapframe(tf);
+        break;
+    }
+}
 
 
 
